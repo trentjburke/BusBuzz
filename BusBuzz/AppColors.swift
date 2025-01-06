@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct color {
+struct AppColors {
     static let background = Color(hex: "#01122E") // Deep blue background
     static let buttonGreen = Color(hex: "#34A062") // Green for buttons and icons
 }
