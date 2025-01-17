@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LaunchScreen: View {
     var body: some View {
-        NavigationView {
+        NavigationView { // Root-level NavigationView
             ZStack {
                 // Background color
                 AppColors.background
@@ -28,7 +28,7 @@ struct LaunchScreen: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .padding(.bottom, 30)
-                    
+
                     // Two Buttons: Bus Operator and User
                     HStack(spacing: 45) {
                         // Bus Operator Button
@@ -62,16 +62,18 @@ struct LaunchScreen: View {
                         }
                     }
                     .padding(.bottom, 40)
-                    
+
                     Spacer()
                 }
             }
+            .navigationTitle("") // Removes the default navigation title
+            .navigationBarHidden(true) // Hides the back button on this screen
         }
     }
 }
 
 // Preview
-struct LaunchPage_Previews: PreviewProvider {
+struct LaunchScreen_Previews: PreviewProvider {
     static var previews: some View {
         LaunchScreen()
     }

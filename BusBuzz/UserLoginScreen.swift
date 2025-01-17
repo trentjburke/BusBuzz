@@ -4,13 +4,14 @@ struct UserLoginScreen: View {
     @State private var userID: String = "" // User ID input
     @State private var password: String = "" // Password input
     @State private var rememberMe: Bool = false // State for "Remember Me"
+    @Environment(\.presentationMode) var presentationMode // Environment variable to manage view presentation
 
     var body: some View {
         ZStack {
             // Background color
             AppColors.background
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 20) {
                 // Logo
                 Image("BusBuzz_Logo_Without_Slogan")
@@ -19,6 +20,7 @@ struct UserLoginScreen: View {
                     .frame(width: 400, height: 300)
                     .padding(.top, -30)
                     .offset(y: 30)
+
                 // Login title
                 HStack(alignment: .center, spacing: -60) {
                     Image("User_icon")
@@ -32,7 +34,6 @@ struct UserLoginScreen: View {
                         .foregroundColor(.white)
                         .padding(.leading, 8)
                 }
-                
                 .padding(.top, 10)
 
                 // User ID and Password Fields
@@ -63,16 +64,14 @@ struct UserLoginScreen: View {
 
                     Spacer()
 
-                    Button(action: {
-                        print("Forgot Password Tapped")
-                    }) {
+                    // NavigationLink for Forgot Password
+                    NavigationLink(destination: ForgotPasswordScreen().navigationBarBackButtonHidden(true)) {
                         Text("Forgot Password?")
                             .font(.subheadline)
                             .foregroundColor(.white)
                     }
                     .padding(.trailing, 40)
                 }
-
 
                 // Sign In and Sign Up Buttons
                 VStack(spacing: 15) {
@@ -89,9 +88,8 @@ struct UserLoginScreen: View {
                             .padding(.horizontal, 40)
                     }
 
-                    Button(action: {
-                        print("Sign Up Tapped")
-                    }) {
+                    // NavigationLink for Sign Up
+                    NavigationLink(destination: UserSignUpScreen()) {
                         Text("Sign Up")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -103,15 +101,30 @@ struct UserLoginScreen: View {
                     }
                 }
 
-                Spacer() 
+                Spacer()
+            }
+        }
+        .navigationBarBackButtonHidden(true) // Hide the default back button
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss() // Navigate back to LaunchScreen
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left") // Back arrow icon
+                        Text("Back")
+                    }
+                    .foregroundColor(.white) // Customize the color as needed
+                }
             }
         }
     }
-
 }
 
 struct UserLoginScreen_Previews: PreviewProvider {
     static var previews: some View {
-        UserLoginScreen()
+        NavigationView {
+            UserLoginScreen()
+        }
     }
 }
