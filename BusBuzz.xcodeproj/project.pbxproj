@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7E57DE8A2D3FFCEB003359F1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7E57DE892D3FFCEB003359F1 /* GoogleSignIn */; };
+		7E57DE8C2D3FFCEB003359F1 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E57DE8B2D3FFCEB003359F1 /* GoogleSignInSwift */; };
+		7E57DE912D400303003359F1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7E57DE902D400303003359F1 /* FirebaseAuth */; };
+		7E57DE932D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
+		7E57DE942D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
+		7E57DE952D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7E5CA8542D27C19D0004ADE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7E5CA83C2D27C19C0004ADE6 /* BusBuzz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusBuzz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA8532D27C19D0004ADE6 /* BusBuzzTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA85D2D27C19D0004ADE6 /* BusBuzzUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +75,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E57DE8A2D3FFCEB003359F1 /* GoogleSignIn in Frameworks */,
+				7E57DE912D400303003359F1 /* FirebaseAuth in Frameworks */,
+				7E57DE8C2D3FFCEB003359F1 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +101,7 @@
 		7E5CA8332D27C19C0004ADE6 = {
 			isa = PBXGroup;
 			children = (
+				7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */,
 				7E5CA83E2D27C19C0004ADE6 /* BusBuzz */,
 				7E5CA8562D27C19D0004ADE6 /* BusBuzzTests */,
 				7E5CA8602D27C19D0004ADE6 /* BusBuzzUITests */,
@@ -125,6 +139,9 @@
 			);
 			name = BusBuzz;
 			packageProductDependencies = (
+				7E57DE892D3FFCEB003359F1 /* GoogleSignIn */,
+				7E57DE8B2D3FFCEB003359F1 /* GoogleSignInSwift */,
+				7E57DE902D400303003359F1 /* FirebaseAuth */,
 			);
 			productName = BusBuzz;
 			productReference = 7E5CA83C2D27C19C0004ADE6 /* BusBuzz.app */;
@@ -208,6 +225,10 @@
 			);
 			mainGroup = 7E5CA8332D27C19C0004ADE6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7E57DE882D3FFCC4003359F1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				7E57DE8F2D400303003359F1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7E5CA83D2D27C19C0004ADE6 /* Products */;
 			projectDirPath = "";
@@ -225,6 +246,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E57DE932D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +254,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E57DE952D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E57DE942D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +593,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7E57DE882D3FFCC4003359F1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		7E57DE8F2D400303003359F1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7E57DE892D3FFCEB003359F1 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E57DE882D3FFCC4003359F1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		7E57DE8B2D3FFCEB003359F1 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E57DE882D3FFCC4003359F1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		7E57DE902D400303003359F1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E57DE8F2D400303003359F1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7E5CA8342D27C19C0004ADE6 /* Project object */;
 }

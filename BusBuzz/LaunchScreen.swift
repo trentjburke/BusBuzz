@@ -30,9 +30,9 @@ struct LaunchScreen: View {
                         .padding(.bottom, 30)
 
                     // Two Buttons: Bus Operator and User
-                    HStack(spacing: 45) {
+                    HStack(spacing: 50) {
                         // Bus Operator Button
-                        NavigationLink(destination: BusOperatorLoginScreen()) {
+                        NavigationLink(destination: BusOperatorLoginScreen().navigationBarBackButtonHidden(true)) {
                             VStack {
                                 Image("Bus_Driver_Icon_Trial")
                                     .resizable()
@@ -44,10 +44,11 @@ struct LaunchScreen: View {
                                     .font(.system(size: 25, weight: .bold))
                                     .foregroundColor(.white)
                             }
+                            .offset(x: -23)
                         }
                         
                         // User Button
-                        NavigationLink(destination: UserLoginScreen()) {
+                        NavigationLink(destination: UserLoginScreen().navigationBarBackButtonHidden(true)) {
                             VStack {
                                 Image("User_icon")
                                     .resizable()
@@ -67,7 +68,7 @@ struct LaunchScreen: View {
                 }
             }
             .navigationTitle("") // Removes the default navigation title
-            .navigationBarHidden(true) // Hides the back button on this screen
+            .navigationBarHidden(true)
         }
     }
 }

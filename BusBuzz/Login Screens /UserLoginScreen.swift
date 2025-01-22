@@ -1,130 +1,348 @@
 import SwiftUI
+import GoogleSignIn
+import GoogleSignInSwift
 
 struct UserLoginScreen: View {
-    @State private var userID: String = "" // User ID input
-    @State private var password: String = "" // Password input
-    @State private var rememberMe: Bool = false // State for "Remember Me"
-    @Environment(\.presentationMode) var presentationMode // Environment variable to manage view presentation
+    @State private var userID: String = ""
+    @State private var password: String = ""
+    @State private var showPassword: Bool = false
+    @State private var emailError: Bool = false
+    @State private var passwordError: Bool = false
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var navigateToMainScreen = false
+
+    @Environment(\.presentationMode) var presentationMode // For dismissing view
 
     var body: some View {
-        ZStack {
-            // Background color
-            AppColors.background
-                .ignoresSafeArea()
+        NavigationView {
+            ZStack {
+                AppColors.background
+                    .ignoresSafeArea()
 
-            VStack(spacing: 20) {
-                // Logo
-                Image("BusBuzz_Logo_Without_Slogan")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 400, height: 300)
-                    .padding(.top, -30)
-                    .offset(y: 30)
+                VStack {
+   
 
-                // Login title
-                HStack(alignment: .center, spacing: -60) {
-                    Image("User_icon")
+                    // Logo
+                    Image("BusBuzz_Logo_Without_Slogan")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .padding(.leading, -125)
+                        .frame(width: 400, height: 300)
+                        .padding(.top, -90)
+                        .offset(y: 30)
 
-                    Text("User Login")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.leading, 8)
-                }
-                .padding(.top, 10)
+                    // Login title
+                    HStack(alignment: .center, spacing: -60) {
+                        Image("User_icon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 60, height: 60)
+                            .padding(.leading, -125)
 
-                // User ID and Password Fields
-                VStack(spacing: 15) {
-                    TextField("Enter User ID", text: $userID)
-                        .padding()
+                        Text("User Login")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.leading, 8)
+                    }
+                    .padding(.top, 10)
+
+                    // User ID and Password Fields
+                    VStack(spacing: 15) {
+                        TextField("Enter Email", text: $userID)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(emailError ? Color.red : Color.clear, lineWidth: 2)
+                            )
+                            .onChange(of: userID) { newValue in
+                                emailError = newValue.isEmpty // Remove red border as soon as user starts typing
+                            }
+                            .padding(.horizontal, 20) // Match padding style with user sign-up screen
+                            .frame(height: 50)
+
+                        HStack(spacing: 0) {
+                            ZStack(alignment: .leading) {
+                                if showPassword {
+                                    TextField("Enter Password", text: $password)
+                                        .padding()
+                                        .frame(maxWidth: .infinity) // Ensures consistent width
+                                        .onChange(of: password) { newValue in
+                                            passwordError = newValue.isEmpty // Remove red border as soon as user starts typing
+                                        }
+                                } else {
+                                    SecureField("Enter Password", text: $password)
+                                        .padding()
+                                        .frame(maxWidth: .infinity) // Ensures consistent width
+                                        .onChange(of: password) { newValue in
+                                            passwordError = newValue.isEmpty // Remove red border as soon as user starts typing
+                                        }
+                                }
+                            }
+                            .background(Color.white)
+                            .cornerRadius(8)
+
+                            Button(action: {
+                                showPassword.toggle()
+                            }) {
+                                Image(systemName: showPassword ? "eye.slash" : "eye")
+                                    .foregroundColor(.gray)
+                                    .frame(width: 40, height: 50) // Consistent size for eye icon
+                            }
+                        }
                         .background(Color.white)
                         .cornerRadius(8)
-                        .padding(.horizontal, 20)
-
-                    SecureField("Enter User Password", text: $password)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .padding(.horizontal, 20)
-                }
-                .padding(.top, 10)
-
-                // Remember Me and Forgot Password Section
-                HStack {
-                    Toggle(isOn: $rememberMe) {
-                        Text("Remember Me?")
-                            .font(.subheadline)
-                            .foregroundColor(.white)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(passwordError ? Color.red : Color.clear, lineWidth: 2)
+                        )
+                        .padding(.horizontal, 20) // Match padding style with user sign-up screen
+                        .frame(height: 50) // Consistent height
                     }
-                    .toggleStyle(CheckboxToggleStyle())
-                    .padding(.leading, 40)
 
-                    Spacer()
-
-                    // NavigationLink for Forgot Password
-                    NavigationLink(destination: ForgotPasswordScreen().navigationBarBackButtonHidden(true)) {
-                        Text("Forgot Password?")
-                            .font(.subheadline)
-                            .foregroundColor(.white)
+                    // Forgot Password Section
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: ForgotPasswordScreen().navigationBarBackButtonHidden(true)) {
+                            Text("Forgot Password?")
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.trailing, 40)
                     }
-                    .padding(.trailing, 40)
-                }
+                    .padding(.top, 5)
 
-                // Sign In and Sign Up Buttons
-                VStack(spacing: 15) {
+                    // Sign In Button
                     Button(action: {
-                        print("Sign In Tapped")
+                        handleSignIn(email: userID, password: password)
                     }) {
                         Text("Sign In")
                             .font(.headline)
                             .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity) // Full width for the button
                             .padding()
                             .background(AppColors.buttonGreen)
                             .cornerRadius(15)
-                            .padding(.horizontal, 40)
+                            .padding(.horizontal, 40) // Match horizontal padding with the sign-up page
                     }
 
-                    // NavigationLink for Sign Up
-                    NavigationLink(destination: UserSignUpScreen()) {
-                        Text("Sign Up")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(AppColors.buttonGreen)
-                            .cornerRadius(15)
-                            .padding(.horizontal, 40)
+                    // Navigation to the Main Screen
+                    NavigationLink(destination: MainScreenContentView(), isActive: $navigateToMainScreen) {
+                        EmptyView()
                     }
-                }
 
-                Spacer()
-            }
-        }
-        .navigationBarBackButtonHidden(true) // Hide the default back button
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss() // Navigate back to LaunchScreen
-                }) {
+                    // Don’t Have an Account + Sign Up Section
                     HStack {
-                        Image(systemName: "chevron.left") // Back arrow icon
-                        Text("Back")
+                        Text("Don’t have an account?")
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundColor(.white)
+
+                        NavigationLink(destination: UserSignUpScreen().navigationBarBackButtonHidden(true)) {
+                            Text("Sign Up")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(AppColors.buttonGreen)
+                        }
                     }
-                    .foregroundColor(.white) // Customize the color as needed
+                    .padding(.top, 5)
+
+                    // "Or" Text
+                    Text("Or")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.top, 5)
+
+                    // Google Sign-In Button
+                    Button(action: {
+                        handleGoogleSignIn()
+                    }) {
+                        HStack {
+                            Image("GoogleIcon")
+                                .resizable()
+                                .frame(width: 45, height: 26)
+                                .padding(.leading, 10)
+
+                            Text("Sign In with Google")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity) // Full width for the button
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(15)
+                    }
+                    .padding(.horizontal, 40) // Match horizontal padding with other buttons
+                    .padding(.top, 10)
                 }
             }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Login Error"),
+                    message: Text("⚠️ \(alertMessage)"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            .navigationBarBackButtonHidden(true) // Hide the blue back arrow
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: {
+                                presentationMode.wrappedValue.dismiss() // Navigate back to LaunchScreen
+                            }) {
+                                HStack {
+                                    Image(systemName: "chevron.left")
+                                    Text("Back")
+                                }
+                                .foregroundColor(.white)
+                            }
+                        }
+                    }
+            
         }
+    }
+
+    private func handleSignIn(email: String, password: String) {
+        emailError = email.isEmpty
+        passwordError = password.isEmpty
+
+        if emailError || passwordError {
+            alertMessage = "Email and Password cannot be empty."
+            showAlert = true
+            return
+        }
+
+        // Firebase REST API
+        let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
+        let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=\(apiKey)")!
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = [
+            "email": email,
+            "password": password,
+            "returnSecureToken": true
+        ]
+
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Login failed: \(error.localizedDescription)"
+                    self.showAlert = true
+                }
+                return
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Failed to parse server response."
+                    self.showAlert = true
+                }
+                return
+            }
+
+            if let error = json["error"] as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
+                    self.showAlert = true
+                }
+                return
+            }
+
+            DispatchQueue.main.async {
+                self.navigateToMainScreen = true
+            }
+        }.resume()
+    }
+
+    private func handleGoogleSignIn() {
+        let clientID = "554442860556-7tkuf6qvlrbruqm5rn9567dj06nfqkrh.apps.googleusercontent.com"
+        let config = GIDConfiguration(clientID: clientID)
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: getRootViewController()!) { signInResult, error in
+            if let error = error {
+                self.alertMessage = "Google Sign-In failed: \(error.localizedDescription)"
+                self.showAlert = true
+                return
+            }
+
+            guard let user = signInResult?.user,
+                  let idToken = user.idToken?.tokenString else {
+                self.alertMessage = "Failed to retrieve Google ID token."
+                self.showAlert = true
+                return
+            }
+
+            self.authenticateWithGoogleIDToken(idToken: idToken)
+        }
+    }
+
+    private func authenticateWithGoogleIDToken(idToken: String) {
+        let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
+        let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=\(apiKey)")!
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = [
+            "postBody": "id_token=\(idToken)&providerId=google.com",
+            "requestUri": "http://localhost",
+            "returnSecureToken": true
+        ]
+
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Firebase authentication failed: \(error.localizedDescription)"
+                    self.showAlert = true
+                }
+                return
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Failed to parse Firebase response."
+                    self.showAlert = true
+                }
+                return
+            }
+
+            if let error = json["error"] as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
+                    self.showAlert = true
+                }
+                return
+            }
+
+            DispatchQueue.main.async {
+                self.navigateToMainScreen = true
+            }
+        }.resume()
+    }
+
+    private func getRootViewController() -> UIViewController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = scene.windows.first?.rootViewController else {
+            return nil
+        }
+        return rootViewController
     }
 }
 
 struct UserLoginScreen_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            UserLoginScreen()
-        }
+        UserLoginScreen()
     }
 }
