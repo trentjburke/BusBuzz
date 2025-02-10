@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleMaps
 
 struct BusOperatorMainMapScreen: View {
     var body: some View {
@@ -21,7 +22,7 @@ struct BusOperatorMainMapScreen: View {
 
                 TabView {
                     // Hamburger Menu Screen
-                    HamburgerMenuScreen()
+                    BusOperatorHamburgerMenuScreen()
                         .tabItem {
                             VStack {
                                 Image("HamburgerIconMainScreen")
@@ -35,7 +36,7 @@ struct BusOperatorMainMapScreen: View {
                         }
 
                     // Main Map Screen
-                    MainMapScreen()
+                    BusOperatorMainMapScreen()
                         .tabItem {
                             VStack {
                                 Image("MainScreenMapIcon")
@@ -49,7 +50,7 @@ struct BusOperatorMainMapScreen: View {
                         }
 
                     // Settings Main Screen
-                    SettingsMainScreen()
+                    BusOperatorSettingsScreen()
                         .tabItem {
                             VStack {
                                 Image("SettingsIconMainScreen")
@@ -73,7 +74,7 @@ struct BusOperatorMainMapScreen: View {
 struct BusOperatorHamburgerMenuScreen: View {
     var body: some View {
         ZStack {
-            Text("Hamburger Menu Screen")
+            Text("Map Screen")
                 .font(.title)
                 .foregroundColor(.black)
         }
@@ -101,8 +102,8 @@ struct BusoperatorSettingsMainScreen: View {
 }
 
 // Preview
-struct BusOperatorMainScreen_Previews: PreviewProvider {
+struct BusOperatorMainMapScreen_Previews: PreviewProvider {
     static var previews: some View {
-        UserMainScreen()
+        BusOperatorMainMapScreen()
     }
 }

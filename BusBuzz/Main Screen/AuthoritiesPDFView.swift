@@ -1,7 +1,8 @@
-//
-//  AuthoritiesViewPDF.swift
-//  BusBuzz
-//
-//  Created by user271476 on 1/28/25.
-//
+import SwiftUI
+import PDFKit
 
+struct AuthoritiesPDFView: View {
+    var body: some View {
+        PDFViewer(pdfName: "BussBuzz Emergency Services Contact List.pdf")
+    }
+}

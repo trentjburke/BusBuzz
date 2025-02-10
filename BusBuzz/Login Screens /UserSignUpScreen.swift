@@ -12,7 +12,7 @@ struct UserSignUpScreen: View {
     @State private var userIDError: Bool = false
     @State private var passwordError: Bool = false
     @State private var confirmPasswordError: Bool = false
-    @State private var navigateToSignIn: Bool = false
+    @State private var navigateToSignIn: Bool = false // Navigation trigger
 
     var body: some View {
         ZStack {
@@ -64,14 +64,14 @@ struct UserSignUpScreen: View {
                                     }
                             }
                         }
-                        .frame(maxWidth: .infinity) // Ensure the text field takes up all available space
+                        .frame(maxWidth: .infinity)
 
                         Button(action: {
                             showPassword.toggle()
                         }) {
                             Image(systemName: showPassword ? "eye.slash" : "eye")
                                 .foregroundColor(.gray)
-                                .frame(width: 30, height: 22) // Fixed size for the eye icon
+                                .frame(width: 30, height: 22)
                         }
                     }
                     .padding()
@@ -82,7 +82,7 @@ struct UserSignUpScreen: View {
                             .stroke(passwordError ? Color.red : Color.clear, lineWidth: 2)
                     )
                     .padding(.horizontal, 20)
-                    .frame(height: 50) // Fixed height to prevent UI shift
+                    .frame(height: 50)
 
                     // Confirm Password Field
                     HStack {
@@ -112,7 +112,7 @@ struct UserSignUpScreen: View {
                             .stroke(confirmPasswordError ? Color.red : Color.clear, lineWidth: 2)
                     )
                     .padding(.horizontal, 20)
-                    .frame(height: 50) // Fixed height to prevent UI shift
+                    .frame(height: 50)
                 }
 
                 // Sign-Up Button
@@ -135,7 +135,7 @@ struct UserSignUpScreen: View {
                         .font(.system(size: 16, weight: .regular))
                         .foregroundColor(.white)
 
-                    NavigationLink(destination: UserLoginScreen().navigationBarBackButtonHidden(true)) {
+                    NavigationLink(destination: UserLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToSignIn) {
                         Text("Sign in")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(AppColors.buttonGreen)
@@ -159,8 +159,8 @@ struct UserSignUpScreen: View {
                             .cornerRadius(10)
                         Spacer()
                     }
-                    .padding(.horizontal, 20) // Add horizontal padding for better alignment
-                    .padding(.bottom, 20)    // Keep it at the bottom
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
                 .transition(.slide)
                 .onAppear {
@@ -169,10 +169,6 @@ struct UserSignUpScreen: View {
                         navigateToSignIn = true
                     }
                 }
-            }
-            // Navigation to Sign In
-            NavigationLink(destination: UserLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToSignIn) {
-                EmptyView()
             }
         }
         .alert(isPresented: $showAlert) {

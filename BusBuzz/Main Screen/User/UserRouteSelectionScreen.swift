@@ -1,100 +1,86 @@
 import SwiftUI
 
 struct UserRouteSelectionScreen: View {
-    @State private var fromLocation: String? = "Current Location" // Default to user's location
-    @State private var toLocation: String? = nil
-    @State private var availableRoutes: [String] = []
-    @State private var showBusStopsScreen = false
-    
-    let locations = ["Maharagama", "Dehiwala", "Piliyandala", "Colombo", "Makumbura", "Galle"]
+    @StateObject private var viewModel = UserRouteSelectionViewModel()
+    @State private var selectedRoute: BusRoute? = nil // Stores the selected route for modal
 
     var body: some View {
-        VStack {
-            // From Picker
-            Picker("Choose starting point", selection: $fromLocation) {
-                Text("Current Location").tag("Current Location")
-                ForEach(locations, id: \.self) { location in
-                    Text(location).tag(location)
+        VStack(spacing: 8) {
+            // 🔹 Top Search Bar for Filtering Routes
+            ZStack {
+                AppColors.background
+                    .edgesIgnoringSafeArea(.top)
+                    .frame(height: 100)
+
+                VStack(spacing: 8) {
+                    HStack {
+                        // 🔹 Search Bar for Filtering Bus Routes
+                        TextField("Search bus routes...", text: $viewModel.searchQuery)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(8)
+                            .frame(height: 40)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .onChange(of: viewModel.searchQuery) { _ in
+                                viewModel.filterRoutes()
+                            }
+                    }
+                    .padding(.horizontal)
                 }
             }
-            .pickerStyle(MenuPickerStyle())
-            .padding()
-            .background(Color.white)
-            .cornerRadius(10)
-            
-            // To Picker
-            Picker("Choose destination", selection: $toLocation) {
-                Text("Select Destination").tag(nil as String?)
-                ForEach(locations, id: \.self) { location in
-                    Text(location).tag(location)
+
+            // 🔹 Available Bus Routes (Filtered Results)
+            ScrollView {
+                VStack(spacing: 6) {
+                    ForEach(viewModel.filteredRoutes) { route in
+                        BusCard(route: route) {
+                            selectedRoute = route // 🔹 Clicking a route opens modal
+                        }
+                    }
                 }
+                .padding(.horizontal)
             }
-            .pickerStyle(MenuPickerStyle())
-            .padding()
-            .background(Color.white)
-            .cornerRadius(10)
-            
-            // Find Bus Button
-            Button(action: {
-                filterRoutes()
-                showBusStopsScreen.toggle()
-            }) {
-                Text("FIND A BUS")
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(AppColors.buttonGreen)
-                    .cornerRadius(10)
+            .onAppear {
+                viewModel.showAllRoutes() // ✅ Shows all routes when app opens
             }
-            .padding()
-            .disabled(toLocation == nil)
-            
+
             Spacer()
         }
-        .padding()
         .background(AppColors.background)
         .navigationTitle("Find a Bus")
-        .sheet(isPresented: $showBusStopsScreen) {
-            UserBusStopsScreen(fromLocation: fromLocation, toLocation: toLocation, availableRoutes: availableRoutes)
+        .sheet(item: $selectedRoute) { route in
+            RouteDetailsView(route: route) // 🔹 Calls the modal view
+                .presentationDetents([.fraction(0.6)]) // Modal height set to 60%
         }
     }
+}
 
+// MARK: - ViewModel for Route Selection
+class UserRouteSelectionViewModel: ObservableObject {
+    @Published var searchQuery: String = "" // 🔹 User's input for filtering
+    @Published var filteredRoutes: [BusRoute] = []
+
+    init() {
+        showAllRoutes() // ✅ Show all routes on load
+    }
+
+    // ✅ Ensures all routes are shown when the app opens
+    func showAllRoutes() {
+        filteredRoutes = BusRoute.allRoutes
+    }
+
+    // 🔹 Filters routes based on search input
     func filterRoutes() {
-        // Logic to filter routes based on the "From" and "To" selections.
-        if fromLocation == "Maharagama" && toLocation == "Dehiwala" {
-            availableRoutes = ["Route 119"]
-        } else if fromLocation == "Piliyandala" && toLocation == "Colombo" {
-            availableRoutes = ["Route 120"]
-        } else if fromLocation == "Makumbura" && toLocation == "Galle" {
-            availableRoutes = ["Route Ex01"]
+        if searchQuery.isEmpty {
+            filteredRoutes = BusRoute.allRoutes
         } else {
-            availableRoutes = [] // No routes available
+            filteredRoutes = BusRoute.allRoutes.filter { $0.name.localizedCaseInsensitiveContains(searchQuery) }
         }
     }
 }
 
-struct UserBusStopsScreen: View {
-    let fromLocation: String?
-    let toLocation: String?
-    let availableRoutes: [String]
-    
-    var body: some View {
-        VStack {
-            Text("Available Routes")
-                .font(.title)
-                .padding()
-            
-            List(availableRoutes, id: \.self) { route in
-                Text(route)
-            }
-            
-            Spacer()
-        }
-    }
-}
-
-// Preview
-struct UserHamburgerMenuScreenView_Previews: PreviewProvider {
+// MARK: - Preview
+struct UserRouteSelectionScreen_Previews: PreviewProvider {
     static var previews: some View {
         UserRouteSelectionScreen()
     }

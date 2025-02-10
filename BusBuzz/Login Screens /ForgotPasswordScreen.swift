@@ -3,6 +3,7 @@ import SwiftUI
 struct ForgotPasswordScreen: View {
     @State private var email: String = "" // State for email input
     @State private var showAlert: Bool = false // State for showing the alert
+    @State private var alertTitle: String = "" // Title for the alert
     @State private var alertMessage: String = "" // Alert message content
     @State private var emailError: Bool = false // State for displaying the red border
 
@@ -25,7 +26,7 @@ struct ForgotPasswordScreen: View {
                     .foregroundColor(.white)
 
                 // Subtitle
-                Text("Enter your registered email and we will send you a verification code to your registered email.")
+                Text("Enter your registered email, and we will send you a password reset email.")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
@@ -47,11 +48,11 @@ struct ForgotPasswordScreen: View {
                     )
                     .padding(.horizontal, 20)
 
-                // Send Verification Code Button
+                // Send Verification Email Button
                 Button(action: {
                     handleForgotPassword(email: email)
                 }) {
-                    Text("Send verification code")
+                    Text("Send Verification Email")
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -80,8 +81,8 @@ struct ForgotPasswordScreen: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("Error"),
-                message: Text("⚠️ \(alertMessage)"), // Added error icon ⚠️ before the message
+                title: Text(alertTitle),
+                message: Text(alertMessage),
                 dismissButton: .default(Text("OK"))
             )
         }
@@ -91,12 +92,14 @@ struct ForgotPasswordScreen: View {
         emailError = email.isEmpty // Set red border if empty
 
         guard !email.isEmpty else {
+            alertTitle = "⚠️ Error"
             alertMessage = "Please enter your email address."
             showAlert = true
             return
         }
 
         guard isValidEmail(email) else {
+            alertTitle = "⚠️ Error"
             alertMessage = "Please enter a valid email address."
             showAlert = true
             return
@@ -119,6 +122,7 @@ struct ForgotPasswordScreen: View {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
+                    alertTitle = "⚠️ Error"
                     alertMessage = "Network error, please try again."
                     showAlert = true
                 }
@@ -130,18 +134,24 @@ struct ForgotPasswordScreen: View {
                     let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                     if jsonResponse?["email"] != nil {
                         DispatchQueue.main.async {
-                            alertMessage = "A verification link has been sent to your email."
+                            alertTitle = "✉️ Password Reset Email Sent"
+                            alertMessage = """
+                            A password reset link has been sent to your registered email address.
+                            Please check your inbox (and spam/junk folder if necessary) and reset your password.
+                            """
                             showAlert = true
                         }
                     } else if let errorResponse = jsonResponse?["error"] as? [String: Any],
                               let message = errorResponse["message"] as? String {
                         DispatchQueue.main.async {
+                            alertTitle = "⚠️ Error"
                             alertMessage = message
                             showAlert = true
                         }
                     }
                 } catch {
                     DispatchQueue.main.async {
+                        alertTitle = "⚠️ Error"
                         alertMessage = "Failed to parse response."
                         showAlert = true
                     }

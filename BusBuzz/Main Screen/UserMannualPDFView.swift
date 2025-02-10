@@ -1,7 +1,8 @@
-//
-//  UserMannualPDFView.swift
-//  BusBuzz
-//
-//  Created by user271476 on 1/28/25.
-//
+import SwiftUI
+import PDFKit
 
+struct UserManualPDFView: View {
+    var body: some View {
+        PDFViewer(pdfName: "BussBuzz User Application Privacy Policy.pdf")
+    }
+}

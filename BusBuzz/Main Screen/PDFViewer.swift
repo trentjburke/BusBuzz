@@ -1,7 +1,26 @@
-//
-//  PDFViewer.swift
-//  BusBuzz
-//
-//  Created by user271476 on 1/28/25.
-//
+import SwiftUI
+import PDFKit
 
+struct PDFViewer: View {
+    let pdfName: String
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Close") {
+                    // Dismiss the view
+                }
+                .padding()
+            }
+
+            if let pdfURL = Bundle.main.url(forResource: pdfName, withExtension: nil) {
+                PDFKitView(url: pdfURL) // ✅ Now using the shared PDFKitView
+            } else {
+                Text("PDF not found")
+                    .foregroundColor(.red)
+                    .bold()
+            }
+        }
+    }
+}

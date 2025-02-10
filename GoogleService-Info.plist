@@ -30,8 +30,13 @@
     <true/>
     <key>GOOGLE_APP_ID</key>
     <string>1:554442860556:ios:23cc5cd851eec8728ee629</string>
-
-    <!-- Added CFBundleURLTypes for Google Sign-In -->
+    <key>OAuthScopes</key>
+    <array>
+        <string>email</string>
+        <string>profile</string>
+    </array>
+    <key>FirebaseAutomaticScreenReportingEnabled</key>
+    <false/>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -39,10 +44,21 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <!-- This is your REVERSED_CLIENT_ID -->
                 <string>com.googleusercontent.apps.554442860556-7tkuf6qvlrbruqm5rn9567dj06nfqkrh</string>
             </array>
         </dict>
     </array>
-</dict>
-</plist>
+
+    <!-- Location Permissions -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to show nearby bus routes.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need your location to show nearby bus routes even when the app is in the background.</string>
+    <!-- Google Maps API Key -->
+     <key>GMSApiKey</key>
+     <string>AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4</string>
+     <!-- Google Places API Key -->
+         <key>GMSPlacesApiKey</key>
+         <string>AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4</string>
+ </dict>
+ </plist>

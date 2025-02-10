@@ -16,18 +16,19 @@ struct SettingsRow: View {
 
                 Text(title)
                     .font(.system(size: 16, weight: .medium)) // Adjusted font size for text
-                    .foregroundColor(.white)
+                    .foregroundColor(AppColors.background) // App background color for text
 
                 Spacer()
 
                 // Arrow indicator
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.white) // Arrow color
+                    .foregroundColor(.gray) // Arrow color adjusted to gray
             }
-            .padding(12) // Reduced padding for compact rows
-            .background(Color.gray.opacity(0.5)) // Slightly transparent background
-            .cornerRadius(8)
-            .padding(.horizontal)
+            .padding(12) // Padding inside the row
+            .frame(maxWidth: .infinity) // Full width for rows
+            .background(AppColors.grayBackground) // Solid gray background without opacity
+            .cornerRadius(8) // Rounded corners for rows
+            .padding(.horizontal) // Horizontal padding around rows
         }
     }
 }

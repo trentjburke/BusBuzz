@@ -1,37 +1,8 @@
 
-import UIKit
-import Firebase
-import SwiftUI
-import GoogleSignIn
-
-/*@main
-class BusBuzzApp: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
-
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        // Configure Firebase
-        FirebaseApp.configure()
-
-        // Set up the root view
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = UIHostingController(rootView: LaunchScreen()) // Start with LaunchScreen
-        window.makeKeyAndVisible()
-        self.window = window
-
-        return true
-    }
-
-    // Handle URL callback for Google Sign-In
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return GIDSignIn.sharedInstance.handle(url)
-    }
-}*/
 import SwiftUI
 import Firebase
 import GoogleSignIn
+import GoogleMaps // Import Google Maps SDK
 
 @main
 struct BusBuzzApp: App {
@@ -47,14 +18,19 @@ struct BusBuzzApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Configure Firebase
         FirebaseApp.configure()
-        
-        // Set the Google Sign-In configuration
+
+        // Configure Google Sign-In
         if let clientID = FirebaseApp.app()?.options.clientID {
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         } else {
             fatalError("Unable to retrieve CLIENT_ID from Firebase configuration.")
         }
+        
+        // Set the Google Maps API key directly (no need for conditional binding)
+        let apiKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4" // Your Google Maps API Key here
+        GMSServices.provideAPIKey(apiKey) // Initialize Google Maps with the API key
         
         return true
     }
