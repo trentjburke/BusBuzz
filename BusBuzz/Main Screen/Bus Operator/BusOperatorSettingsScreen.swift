@@ -9,33 +9,33 @@ struct BusOperatorSettingsScreen: View {
             AppColors.background
                 .edgesIgnoringSafeArea(.all)
 
-            VStack(spacing: 20) { // Reduced spacing between rows
+            VStack(spacing: 20) {
                 // Header
                 HStack {
                     Text("Settings")
                         .font(.system(size: 40, weight: .bold)) // Adjusted font size for header
                         .foregroundColor(.white) // Keep "Settings" in white
                     Spacer()
-                    Image("Bus_Driver_Icon_Trial") // Custom icon for the user profile
+                    Image("Bus_Driver_Icon_Trial")
                         .resizable()
-                        .frame(width: 85, height: 85) // Reduced size for profile icon
+                        .frame(width: 85, height: 85)
                         .foregroundColor(.white)
                 }
                 .padding(.horizontal)
                 .padding(.top, -30)
 
                 // List of Settings
-                VStack(spacing: 10) { // Reduced spacing between rows
+                VStack(spacing: 10) {
                     // Online/Offline Toggle Row
                     HStack {
-                        Image("Offline & Online Settings Icon") // Custom icon for Online/Offline
+                        Image("Offline & Online Settings Icon")
                             .resizable()
-                            .frame(width: 35, height: 35) // Adjust size
+                            .frame(width: 35, height: 35)
                             .padding(.trailing, 10)
 
                         Text("Online/Offline")
-                            .font(.system(size: 16, weight: .medium)) // Adjusted font size for text
-                            .foregroundColor(AppColors.background) // Use app background color for text
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(AppColors.background)
 
                         Spacer()
 
@@ -48,19 +48,21 @@ struct BusOperatorSettingsScreen: View {
                     .padding(.horizontal)
 
                     // Settings Rows
-                    SettingsRow(iconName: "Application info", title: "Application info") {
-                        print("Application info tapped")
-                    }
-                    SettingsRow(iconName: "User Manual", title: "User Manual") {
+                    SettingsRow(iconName: "Application info", title: "Application Info", textColor: AppColors.background, destination: AnyView(ApplicationInfoView()))
+
+                    SettingsRow(iconName: "User Manual", title: "User Manual", textColor: AppColors.background) {
                         print("User Manual tapped")
                     }
-                    SettingsRow(iconName: "Contact us", title: "Contact Us") {
+
+                    SettingsRow(iconName: "Contact us", title: "Contact Us", textColor: AppColors.background) {
                         print("Contact Us tapped")
                     }
-                    SettingsRow(iconName: "Privacy policy icon", title: "Private Policy") {
-                        print("Private Policy tapped")
+
+                    SettingsRow(iconName: "Privacy policy icon", title: "Privacy Policy", textColor: AppColors.background) {
+                        print("Privacy Policy tapped")
                     }
-                    SettingsRow(iconName: "Logout Icon", title: "Logout") {
+
+                    SettingsRow(iconName: "Logout Icon", title: "Logout", textColor: AppColors.background) {
                         print("Logout tapped")
                     }
                 }

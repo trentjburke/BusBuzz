@@ -15,7 +15,7 @@ struct PDFViewer: View {
             }
 
             if let pdfURL = Bundle.main.url(forResource: pdfName, withExtension: nil) {
-                PDFKitView(url: pdfURL) // ✅ Now using the shared PDFKitView
+                PDFKitView(url: pdfURL)
             } else {
                 Text("PDF not found")
                     .foregroundColor(.red)

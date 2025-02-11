@@ -1,34 +1,48 @@
 import SwiftUI
 
 struct SettingsRow: View {
-    var iconName: String // Name of the custom icon
+    var iconName: String  // Custom Icon Name
     var title: String
-    var action: () -> Void // Closure for handling button tap
+    var textColor: Color = AppColors.background // ✅ Default to App Background Color
+    var destination: AnyView? = nil
+    var action: (() -> Void)? = nil
 
     var body: some View {
-        Button(action: action) {
-            HStack {
-                // Use custom icons
-                Image(iconName)
-                    .resizable()
-                    .frame(width: 35, height: 35) // Adjusted icon size
-                    .padding(.trailing, 10) // Added padding for spacing
-
-                Text(title)
-                    .font(.system(size: 16, weight: .medium)) // Adjusted font size for text
-                    .foregroundColor(AppColors.background) // App background color for text
-
-                Spacer()
-
-                // Arrow indicator
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray) // Arrow color adjusted to gray
+        if let destination = destination {
+            NavigationLink(destination: destination) {
+                rowContent
             }
-            .padding(12) // Padding inside the row
-            .frame(maxWidth: .infinity) // Full width for rows
-            .background(AppColors.grayBackground) // Solid gray background without opacity
-            .cornerRadius(8) // Rounded corners for rows
-            .padding(.horizontal) // Horizontal padding around rows
+        } else if let action = action {
+            Button(action: action) {
+                rowContent
+            }
         }
+    }
+
+    private var rowContent: some View {
+        HStack {
+            // Use Custom Icons
+            Image(iconName)
+                .resizable()
+                .frame(width: 35, height: 35)
+                .padding(.trailing, 10)
+
+            Text(title)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(textColor) 
+
+            Spacer()
+
+            // Arrow Indicator for Navigation (Only for navigation links)
+            if destination != nil {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(AppColors.grayBackground)
+        .cornerRadius(8)
+        .padding(.horizontal)
     }
 }

@@ -2,17 +2,17 @@ import Foundation
 
 struct BusRoute: Identifiable {
     let id = UUID()
-    let routeNumber: String  // ✅ Fixed Route Number
+    let routeNumber: String
     let name: String
     let stops: [String]
     var currentBusStop: String
 
-    // 🔹 Computed property to dynamically reverse the route name
+    // Computed property to dynamically reverse the route name
     var reversedName: String {
         return getReversedRouteName()
     }
 
-    // 🔹 Function to reverse route names correctly
+    // Function to reverse route names correctly
     private func getReversedRouteName() -> String {
         switch routeNumber {
         case "119":
@@ -26,7 +26,7 @@ struct BusRoute: Identifiable {
         }
     }
 
-    // 🔹 Hardcoded Available Bus Routes (Now with Route Numbers)
+    // Hardcoded Available Bus Routes (Now with Route Numbers)
     static let allRoutes: [BusRoute] = [
         BusRoute(routeNumber: "119", name: "119 - Maharagama to Dehiwala", stops: ["Maharagama", "Boralesgamuwa", "Pirivena Junction", "Dewalamulla", "Bellanwila", "Bellantota", "Nikape", "Nedimala", "Karagampitiya", "Dehiwela"], currentBusStop: "Dewalamulla"),
 

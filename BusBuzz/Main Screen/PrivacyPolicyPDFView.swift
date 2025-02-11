@@ -4,28 +4,27 @@ import PDFKit
 struct PrivacyPolicyPDFView: View {
     var body: some View {
         VStack {
-            Text("Privacy Policy")
-                .font(.title)
-                .bold()
-                .padding(.top, 20)
+            Divider()
 
+            // 🔹 PDF Viewer
             if let pdfURL = Bundle.main.url(forResource: "BussBuzz User Application Privacy Policy", withExtension: "pdf") {
-                PDFKitView(url: pdfURL) // ✅ Now using the shared PDFKitView
+                PDFKitView(url: pdfURL)
+                    .edgesIgnoringSafeArea(.all)
             } else {
                 Text("PDF not found")
                     .foregroundColor(.red)
                     .bold()
             }
-
-            Spacer()
         }
+        .padding()
         .navigationTitle("Privacy Policy")
     }
 }
 
-// Preview
 struct PrivacyPolicyPDFView_Previews: PreviewProvider {
     static var previews: some View {
-        PrivacyPolicyPDFView()
+        NavigationView { 
+            PrivacyPolicyPDFView()
+        }
     }
 }

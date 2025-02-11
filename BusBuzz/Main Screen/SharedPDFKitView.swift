@@ -1,7 +1,6 @@
 import SwiftUI
 import PDFKit
 
-// Shared PDFKit View Wrapper
 struct PDFKitView: UIViewRepresentable {
     let url: URL
 

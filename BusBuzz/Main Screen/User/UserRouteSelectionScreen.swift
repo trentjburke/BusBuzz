@@ -2,11 +2,11 @@ import SwiftUI
 
 struct UserRouteSelectionScreen: View {
     @StateObject private var viewModel = UserRouteSelectionViewModel()
-    @State private var selectedRoute: BusRoute? = nil // Stores the selected route for modal
+    @State private var selectedRoute: BusRoute? = nil
 
     var body: some View {
         VStack(spacing: 8) {
-            // 🔹 Top Search Bar for Filtering Routes
+            // Top Search Bar for Filtering Routes
             ZStack {
                 AppColors.background
                     .edgesIgnoringSafeArea(.top)
@@ -14,7 +14,7 @@ struct UserRouteSelectionScreen: View {
 
                 VStack(spacing: 8) {
                     HStack {
-                        // 🔹 Search Bar for Filtering Bus Routes
+                        // Search Bar for Filtering Bus Routes
                         TextField("Search bus routes...", text: $viewModel.searchQuery)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(8)
@@ -29,19 +29,19 @@ struct UserRouteSelectionScreen: View {
                 }
             }
 
-            // 🔹 Available Bus Routes (Filtered Results)
+            // Show Available Bus Routes
             ScrollView {
                 VStack(spacing: 6) {
                     ForEach(viewModel.filteredRoutes) { route in
                         BusCard(route: route) {
-                            selectedRoute = route // 🔹 Clicking a route opens modal
+                            selectedRoute = route
                         }
                     }
                 }
                 .padding(.horizontal)
             }
             .onAppear {
-                viewModel.showAllRoutes() // ✅ Shows all routes when app opens
+                viewModel.showAllRoutes()
             }
 
             Spacer()
@@ -49,27 +49,26 @@ struct UserRouteSelectionScreen: View {
         .background(AppColors.background)
         .navigationTitle("Find a Bus")
         .sheet(item: $selectedRoute) { route in
-            RouteDetailsView(route: route) // 🔹 Calls the modal view
-                .presentationDetents([.fraction(0.6)]) // Modal height set to 60%
+            RouteDetailsView(route: route)
+                .presentationDetents([.fraction(0.6)])
         }
     }
 }
 
-// MARK: - ViewModel for Route Selection
+// ViewModel for Route Selection
 class UserRouteSelectionViewModel: ObservableObject {
-    @Published var searchQuery: String = "" // 🔹 User's input for filtering
+    @Published var searchQuery: String = ""
     @Published var filteredRoutes: [BusRoute] = []
 
     init() {
-        showAllRoutes() // ✅ Show all routes on load
+        showAllRoutes()
     }
 
-    // ✅ Ensures all routes are shown when the app opens
+    
     func showAllRoutes() {
         filteredRoutes = BusRoute.allRoutes
     }
 
-    // 🔹 Filters routes based on search input
     func filterRoutes() {
         if searchQuery.isEmpty {
             filteredRoutes = BusRoute.allRoutes
@@ -79,7 +78,6 @@ class UserRouteSelectionViewModel: ObservableObject {
     }
 }
 
-// MARK: - Preview
 struct UserRouteSelectionScreen_Previews: PreviewProvider {
     static var previews: some View {
         UserRouteSelectionScreen()

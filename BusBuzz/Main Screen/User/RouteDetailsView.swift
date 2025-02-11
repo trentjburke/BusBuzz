@@ -22,16 +22,15 @@ struct RouteDetailsView: View {
                         .shadow(radius: 2)
                 }
 
-                // 🔹 Fixed Route Number + Dynamic Route Name (NO DUPLICATION)
                 HStack {
-                    Text(route.routeNumber) // ✅ Fixed Route Number
+                    Text(route.routeNumber)
                         .foregroundColor(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(AppColors.buttonGreen)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                    Text(isReversed ? getReversedRouteName() : getCleanRouteName()) // ✅ Fixed Route Name (Without Duplication)
+                    Text(isReversed ? getReversedRouteName() : getCleanRouteName())
                         .font(.headline)
                         .bold()
                         .foregroundColor(.white)
@@ -40,9 +39,9 @@ struct RouteDetailsView: View {
 
                 Spacer()
 
-                // 🔹 Close Button (X) at the top right
+                // Close Button (X) at the top right
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss() // ✅ Closes the modal
+                    presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .resizable()
@@ -56,33 +55,40 @@ struct RouteDetailsView: View {
 
             Divider()
 
-            // 🔹 Scrollable Bus Stop List with Dynamic Bus & User Location
+            // Scrollable Bus Stop List with Aligned Dots
             ScrollView {
                 VStack(alignment: .leading) {
                     let stops = isReversed ? route.stops.reversed() : route.stops
                     ForEach(stops.indices, id: \.self) { index in
-                        HStack {
-                            // 🔹 Vertical Line Indicator (Gray with Green Active Stop)
-                            VStack {
+                        HStack(alignment: .center) {
+                            // 🔹 Vertical Line & Stop Dots (Aligned)
+                            VStack(spacing: 0) {
                                 if index > 0 {
                                     Rectangle()
                                         .fill(AppColors.grayBackground)
-                                        .frame(width: 4, height: 25) // Vertical Line
+                                        .frame(width: 4, height: 15) // Connects upper line
                                 }
+
                                 Circle()
                                     .fill(index == currentBusStopIndex ? AppColors.buttonGreen : AppColors.grayBackground)
-                                    .frame(width: 12, height: 12) // Stop Indicator
-                            }
+                                    .frame(width: 10, height: 10) // Stop Indicator
 
-                            // 🔹 Bus Stop Name
+                                if index < stops.count - 1 {
+                                    Rectangle()
+                                        .fill(AppColors.grayBackground)
+                                        .frame(width: 4, height: 15) // Connects lower line
+                                }
+                            }
+                            .frame(width: 20) // Ensures consistent alignment
+
+                            // 🔹 Bus Stop Name (Left-Aligned)
                             Text(stops[index])
                                 .font(.system(size: 16))
                                 .foregroundColor(.white)
-                                .padding(.leading, 5)
+                                .padding(.leading, 8)
 
                             Spacer()
 
-                            // 🔹 Bus Moving Along Route 🚌
                             if index == currentBusStopIndex {
                                 Image(systemName: "bus.fill")
                                     .foregroundColor(.blue)
@@ -90,7 +96,6 @@ struct RouteDetailsView: View {
                                     .transition(.slide)
                             }
 
-                            // 🔹 User's Location (Stickman) 🚶
                             if index == userLocationIndex {
                                 Image(systemName: "figure.walk")
                                     .foregroundColor(.yellow)
@@ -107,9 +112,9 @@ struct RouteDetailsView: View {
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding()
 
-            // 🔹 Track Bus Button (Now at the bottom)
+            // Track Bus Button (Now at the bottom)
             Button(action: {
-                // 🔹 Implement tracking bus logic here
+                //Implement tracking bus logic here
             }) {
                 Text("Track Bus")
                     .font(.system(size: 16, weight: .bold))

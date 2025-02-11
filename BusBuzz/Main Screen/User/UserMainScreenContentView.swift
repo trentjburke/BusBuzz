@@ -26,7 +26,7 @@ struct UserMainScreenContentView: View {
                     // Main Map Screen
                     UserMainMapScreen()
                         .tabItem {
-                            Image(systemName: "map") // Default system icon for map
+                            Image(systemName: "map") 
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 25, height: 25)
@@ -46,9 +46,9 @@ struct UserMainScreenContentView: View {
                         .tag(2)
                 }
                 .accentColor(AppColors.buttonGreen)
-                .ignoresSafeArea(edges: .bottom) // Prevents extra spacing issues
+                .ignoresSafeArea(edges: .bottom)
             }
-            .edgesIgnoringSafeArea(.top) // Ensure no overlap on the top part
+            .edgesIgnoringSafeArea(.top)
         }
         .navigationBarBackButtonHidden(true)
     }
