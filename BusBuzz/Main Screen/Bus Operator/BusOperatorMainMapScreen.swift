@@ -2,108 +2,43 @@ import SwiftUI
 import GoogleMaps
 
 struct BusOperatorMainMapScreen: View {
+    @StateObject private var viewModel = MainMapScreenViewModel()
+    @State private var googleMapView: GMSMapView?
+
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Main Content Area
-            Color(AppColors.background)
-                .edgesIgnoringSafeArea(.all) // App background spans full screen
+        ZStack {
+            GoogleMapView(
+                polylinePath: $viewModel.polylinePath,
+                userLocation: $viewModel.userLocation,
+                isUser: false,
+                onMapReady: { map in
+                    self.googleMapView = map
+                    viewModel.setGoogleMapView(map)
+                }
+            )
+            .edgesIgnoringSafeArea(.all)
 
             VStack {
-                Spacer() // Push content upward
-                Text("Main Content Area")
-                    .font(.title)
-                    .foregroundColor(.white)
-            }
-
-            // TabView with Custom Background
-            ZStack {
-                AppColors.grayBackground // Gray background for TabView
-                    .edgesIgnoringSafeArea(.bottom)
-
-                TabView {
-                    // Hamburger Menu Screen
-                    BusOperatorHamburgerMenuScreen()
-                        .tabItem {
-                            VStack {
-                                Image("HamburgerIconMainScreen")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30) // Adjust icon size
-                                    .foregroundColor(AppColors.background) // Set default color
-                                Text("") // Empty text for spacing
-                            }
-                        }
-
-                    // Main Map Screen
-                    BusOperatorMainMapScreen()
-                        .tabItem {
-                            VStack {
-                                Image("MainScreenMapIcon")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30) // Adjust icon size
-                                    .foregroundColor(AppColors.background) // Set default color
-                                Text("") // Empty text for spacing
-                            }
-                        }
-
-                    // Settings Main Screen
-                    BusOperatorSettingsScreen()
-                        .tabItem {
-                            VStack {
-                                Image("SettingsIconMainScreen")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30) // Adjust icon size
-                                    .foregroundColor(AppColors.background) // Set default color
-                                Text("") // Empty text for spacing
-                            }
-                        }
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        viewModel.centerMapOnUser()
+                    }) {
+                        Image("AccuracyIcon")
+                            .resizable()
+                            .frame(width: 37.5, height: 37.5)
+                            .background(Color.white.opacity(0.8))
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 50)
                 }
-                .accentColor(AppColors.buttonGreen) // Green for active tab
             }
-            .frame(height: 70) // TabView height
         }
-    }
-}
-
-// Placeholder Views for Tabs
-struct BusOperatorHamburgerMenuScreen: View {
-    var body: some View {
-        ZStack {
-            Text("Map Screen")
-                .font(.title)
-                .foregroundColor(.black)
+        .onAppear {
+            viewModel.fetchRoutes()  // Ensure this method is called to fetch the routes
         }
-    }
-}
-
-struct BusOperaotrMainMapScreen: View {
-    var body: some View {
-        ZStack {
-            Text("Main Map Screen")
-                .font(.title)
-                .foregroundColor(.black)
-        }
-    }
-}
-
-struct BusoperatorSettingsMainScreen: View {
-    var body: some View {
-        ZStack {
-            Text("Settings Main Screen")
-                .font(.title)
-                .foregroundColor(.black)
-        }
-    }
-}
-
-// Preview
-struct BusOperatorMainMapScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        BusOperatorMainMapScreen()
     }
 }

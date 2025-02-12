@@ -8,7 +8,8 @@ struct BusOperatorLoginScreen: View {
     @State private var passwordError: Bool = false // Error state for password input
     @State private var showAlert: Bool = false // State for showing alerts
     @State private var alertMessage: String = "" // Alert message content
-    @State private var navigateToMainScreen = false // Navigation trigger to MainScreenContentView
+    @State private var navigateToTimetableScreen = false // Navigation trigger to Timetable tab
+    @State private var navigateToMainScreen = false // Navigation trigger to Main Screen content
 
     var body: some View {
         NavigationView {
@@ -115,7 +116,7 @@ struct BusOperatorLoginScreen: View {
                             .padding(.horizontal, 40)
                     }
 
-                    NavigationLink(destination: BusOperatorMainMapScreen(), isActive: $navigateToMainScreen) {
+                    NavigationLink(destination: BusOperatorMainScreenContentView(), isActive: $navigateToMainScreen) {
                         EmptyView()
                     }
 
@@ -145,6 +146,7 @@ struct BusOperatorLoginScreen: View {
         }
         .navigationViewStyle(StackNavigationViewStyle()) // Ensures consistent navigation
     }
+
     private func handleSignIn(email: String, password: String) {
         emailError = email.isEmpty
         passwordError = password.isEmpty

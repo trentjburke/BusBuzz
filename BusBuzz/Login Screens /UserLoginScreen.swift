@@ -184,7 +184,6 @@ struct UserLoginScreen: View {
                             Text("Sign In with Google")
                                 .font(.headline)
                                 .foregroundColor(.black)
-                        
 
                             // Spacer to balance content
                             Spacer()
@@ -221,61 +220,59 @@ struct UserLoginScreen: View {
         }
 
         // Firebase REST API
-               let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
-               let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=\(apiKey)")!
+        let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
+        let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=\(apiKey)")!
 
-               var request = URLRequest(url: url)
-               request.httpMethod = "POST"
-               request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-               let payload: [String: Any] = [
-                   "email": email,
-                   "password": password,
-                   "returnSecureToken": true
-               ]
+        let payload: [String: Any] = [
+            "email": email,
+            "password": password,
+            "returnSecureToken": true
+        ]
 
-               request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
-               URLSession.shared.dataTask(with: request) { data, response, error in
-                   if let error = error {
-                       DispatchQueue.main.async {
-                           self.alertMessage = "Login failed: \(error.localizedDescription)"
-                           self.showAlert = true
-                       }
-                       return
-                   }
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Login failed: \(error.localizedDescription)"
+                    self.showAlert = true
+                }
+                return
+            }
 
-                   guard let data = data,
-                         let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                       DispatchQueue.main.async {
-                           self.alertMessage = "Failed to parse server response."
-                           self.showAlert = true
-                       }
-                       return
-                   }
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                DispatchQueue.main.async {
+                    self.alertMessage = "Failed to parse server response."
+                    self.showAlert = true
+                }
+                return
+            }
 
-                   if let error = json["error"] as? [String: Any] {
-                       DispatchQueue.main.async {
-                           self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
-                           self.showAlert = true
-                       }
-                       return
-                   }
+            if let error = json["error"] as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
+                    self.showAlert = true
+                }
+                return
+            }
 
-                   DispatchQueue.main.async {
-                       self.navigateToMainScreen = true
-                   }
-               }.resume()
-           }
+            DispatchQueue.main.async {
+                self.navigateToMainScreen = true
+            }
+        }.resume()
+    }
 
     private func handleGoogleSignIn() {
         let clientID = "554442860556-7tkuf6qvlrbruqm5rn9567dj06nfqkrh.apps.googleusercontent.com"
         let config = GIDConfiguration(clientID: clientID)
-        print("Starting Google Sign-In process...") // Debug log
 
         GIDSignIn.sharedInstance.signIn(withPresenting: getRootViewController()!) { signInResult, error in
             if let error = error {
-                print("Google Sign-In failed: \(error.localizedDescription)") // Debug log
                 self.alertMessage = "Google Sign-In failed: \(error.localizedDescription)"
                 self.showAlert = true
                 return
@@ -283,13 +280,11 @@ struct UserLoginScreen: View {
 
             guard let user = signInResult?.user,
                   let idToken = user.idToken?.tokenString else {
-                print("Failed to retrieve user or ID token.") // Debug log
                 self.alertMessage = "Failed to retrieve Google ID token."
                 self.showAlert = true
                 return
             }
 
-            print("Google Sign-In successful. ID Token: \(idToken)") // Debug log
             self.authenticateWithGoogleIDToken(idToken: idToken)
         }
     }
@@ -297,7 +292,6 @@ struct UserLoginScreen: View {
     private func authenticateWithGoogleIDToken(idToken: String) {
         let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
         let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=\(apiKey)")!
-        print("Authenticating with Firebase using ID Token...") // Debug log
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -313,50 +307,40 @@ struct UserLoginScreen: View {
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Firebase authentication failed: \(error.localizedDescription)") // Debug log
-                DispatchQueue.main.async {
-                    self.alertMessage = "Firebase authentication failed: \(error.localizedDescription)"
-                    self.showAlert = true
-                }
+                self.alertMessage = "Firebase authentication failed: \(error.localizedDescription)"
+                self.showAlert = true
                 return
             }
 
             guard let data = data,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                print("Failed to parse Firebase response.") // Debug log
-                DispatchQueue.main.async {
-                    self.alertMessage = "Failed to parse Firebase response."
-                    self.showAlert = true
-                }
+                self.alertMessage = "Failed to parse Firebase response."
+                self.showAlert = true
                 return
             }
 
             if let error = json["error"] as? [String: Any] {
-                print("Firebase returned an error: \(error)") // Debug log
-                DispatchQueue.main.async {
-                    self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
-                    self.showAlert = true
-                }
+                self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
+                self.showAlert = true
                 return
             }
 
-            print("Firebase authentication successful. Response: \(json)") // Debug log
             DispatchQueue.main.async {
                 self.navigateToMainScreen = true
             }
         }.resume()
-           }
+    }
 
-           private func getRootViewController() -> UIViewController? {
-               guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                     let rootViewController = scene.windows.first?.rootViewController else {
-                   return nil
-               }
-               return rootViewController
-           }
-       }
-           struct UserLoginScreen_Previews: PreviewProvider {
-           static var previews: some View {
-               UserLoginScreen()
-           }
-       }
+    private func getRootViewController() -> UIViewController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = scene.windows.first?.rootViewController else {
+            return nil
+        }
+        return rootViewController
+    }
+}
+struct UserLoginScreen_Previews: PreviewProvider {
+        static var previews: some View {
+            UserLoginScreen()
+        }
+    }

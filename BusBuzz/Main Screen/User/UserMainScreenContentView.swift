@@ -12,7 +12,7 @@ struct UserMainScreenContentView: View {
                 Spacer()
 
                 TabView(selection: $selectedTab) {
-                    // Hamburger Menu Screen
+        
                     UserRouteSelectionScreen()
                         .tabItem {
                             Image(systemName: "list.bullet")
@@ -26,7 +26,7 @@ struct UserMainScreenContentView: View {
                     // Main Map Screen
                     UserMainMapScreen()
                         .tabItem {
-                            Image(systemName: "map") 
+                            Image(systemName: "map")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 25, height: 25)

@@ -1,19 +1,18 @@
 import SwiftUI
 
-struct BusOperatorHamburgerMenuScreen: View {
+struct BusOperatorTimetableScreen: View {
     var body: some View {
         ZStack {
             AppColors.background.edgesIgnoringSafeArea(.all)
-            Text("Hamburger Menu Screen")
+            Text("Timetable Screen")
                 .font(.title)
                 .foregroundColor(.white)
         }
     }
 }
 
-struct BusOperatorHamburgerMenuScreen_Previews: PreviewProvider {
+struct BusOperatorTimetableScreen_Previews: PreviewProvider {
     static var previews: some View {
-        BusOperatorHambdurgerMenuScreen()
+        BusOperatorTimetableScreen()
     }
 }
-

@@ -87,28 +87,16 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				"Main Screen/Bus Operator/BusOperatorHamburgerMenuScreen.swift",
 			);
 			target = 7E5CA83B2D27C19C0004ADE6 /* BusBuzz */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7E2A388A2D47D014008E1611 /* Exceptions for "BusBuzz" folder in "Copy Bundle Resources" phase from "BusBuzz" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 7E5CA83A2D27C19C0004ADE6 /* Resources */;
-			membershipExceptions = (
-				"Main Screen/Bus Operator/BusOperatorHamburgerMenuScreen.swift",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7E5CA83E2D27C19C0004ADE6 /* BusBuzz */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				7E5CA8652D27C19D0004ADE6 /* Exceptions for "BusBuzz" folder in "BusBuzz" target */,
-				7E2A388A2D47D014008E1611 /* Exceptions for "BusBuzz" folder in "Copy Bundle Resources" phase from "BusBuzz" target */,
 			);
 			path = BusBuzz;
 			sourceTree = "<group>";
