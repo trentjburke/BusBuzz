@@ -5,48 +5,63 @@ struct UserRouteSelectionScreen: View {
     @State private var selectedRoute: BusRoute? = nil
 
     var body: some View {
-        VStack(spacing: 8) {
-            // Top Search Bar for Filtering Routes
-            ZStack {
-                AppColors.background
-                    .edgesIgnoringSafeArea(.top)
-                    .frame(height: 100)
+        ZStack {
+            // Ensure the blue background covers the entire screen
+            AppColors.background
+                .edgesIgnoringSafeArea(.top) // Ensures the blue background extends to the top
 
-                VStack(spacing: 8) {
-                    HStack {
-                        // Search Bar for Filtering Bus Routes
-                        TextField("Search bus routes...", text: $viewModel.searchQuery)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(8)
-                            .frame(height: 40)
-                            .background(Color.white)
-                            .cornerRadius(8)
-                            .onChange(of: viewModel.searchQuery) { _ in
-                                viewModel.filterRoutes()
+            VStack(spacing: 8) {
+                // Top Search Bar for Filtering Routes
+                ZStack {
+                    AppColors.background
+                        .edgesIgnoringSafeArea(.top)
+                        .frame(height: 100)
+
+                    VStack(spacing: 8) {
+                        HStack {
+                            // Search Bar for Filtering Bus Routes
+                            TextField("Search bus routes...", text: $viewModel.searchQuery)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(8)
+                                .frame(height: 40)
+                                .background(Color.white)
+                                .cornerRadius(8)
+                                .onChange(of: viewModel.searchQuery) { _ in
+                                    viewModel.filterRoutes()
+                                }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+
+                // Show Available Bus Routes
+                ScrollView {
+                    VStack(spacing: 6) {
+                        ForEach(viewModel.filteredRoutes) { route in
+                            BusCard(route: route) {
+                                selectedRoute = route
                             }
+                        }
                     }
                     .padding(.horizontal)
                 }
-            }
-
-            // Show Available Bus Routes
-            ScrollView {
-                VStack(spacing: 6) {
-                    ForEach(viewModel.filteredRoutes) { route in
-                        BusCard(route: route) {
-                            selectedRoute = route
-                        }
-                    }
+                .onAppear {
+                    viewModel.showAllRoutes()
                 }
-                .padding(.horizontal)
-            }
-            .onAppear {
-                viewModel.showAllRoutes()
+
+                Spacer() // Ensures the content stays above the tab view area
             }
 
-            Spacer()
+            // Gray Background for the Bottom TabBar (if required)
+            VStack {
+                Spacer()
+                    AppColors.grayBackground
+                        .frame(height: 83)
+                        .frame(maxWidth: .infinity)
+                        .edgesIgnoringSafeArea(.bottom) // Ensures it stretches across the bottom
+            }
+            .edgesIgnoringSafeArea(.bottom) // Ensures the tab view is fully covered
         }
-        .background(AppColors.background)
         .navigationTitle("Find a Bus")
         .sheet(item: $selectedRoute) { route in
             RouteDetailsView(route: route)
@@ -64,7 +79,6 @@ class UserRouteSelectionViewModel: ObservableObject {
         showAllRoutes()
     }
 
-    
     func showAllRoutes() {
         filteredRoutes = BusRoute.allRoutes
     }
