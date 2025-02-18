@@ -1,19 +1,21 @@
 import SwiftUI
 import GoogleMaps
+import CoreLocation
 
 struct BusOperatorMainMapScreen: View {
-    @StateObject private var viewModel = MainMapScreenViewModel()
+    @StateObject private var viewModel = BusOperatorMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
 
     var body: some View {
         ZStack {
             GoogleMapView(
                 polylinePath: $viewModel.polylinePath,
-                userLocation: $viewModel.userLocation,
+                userLocation: $viewModel.busLocation,
                 isUser: false,
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
+                    viewModel.startTrackingBus()
                 }
             )
             .edgesIgnoringSafeArea(.all)
@@ -23,7 +25,7 @@ struct BusOperatorMainMapScreen: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        viewModel.centerMapOnUser()
+                        viewModel.centerMapOnBus()
                     }) {
                         Image("AccuracyIcon")
                             .resizable()
@@ -36,9 +38,24 @@ struct BusOperatorMainMapScreen: View {
                     .padding(.bottom, 50)
                 }
             }
+
+            // Gray background for the bottom tab view
+            VStack {
+                Spacer()
+                AppColors.grayBackground
+                    .frame(height: 83)
+                    .edgesIgnoringSafeArea(.bottom)
+            }
+            .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear {
-            viewModel.fetchRoutes()  // Ensure this method is called to fetch the routes
+            viewModel.startTrackingBus()
         }
+    }
+}
+
+struct BusOperatorMainMapScreen_Previews: PreviewProvider {
+    static var previews: some View {
+        BusOperatorMainMapScreen()
     }
 }

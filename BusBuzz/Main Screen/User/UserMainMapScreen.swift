@@ -2,12 +2,13 @@ import SwiftUI
 import GoogleMaps
 
 struct UserMainMapScreen: View {
-    @StateObject private var viewModel = MainMapScreenViewModel()
+    @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
+    var selectedRoute: BusRoute
 
     var body: some View {
         ZStack {
-            // Map View
+            // Google Map view with route polyline and user location
             GoogleMapView(
                 polylinePath: $viewModel.polylinePath,
                 userLocation: $viewModel.userLocation,
@@ -15,16 +16,18 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
+                    viewModel.fetchSelectedRoute(for: selectedRoute) // Fetch selected route for map display
                 }
             )
-            .edgesIgnoringSafeArea(.top) // To ensure the map is full-screen above the tab view
-            
+            .edgesIgnoringSafeArea(.top)
+
             VStack {
-                Spacer() // To push the button upward so that the tab view is not covered
+                Spacer()
                 HStack {
                     Spacer()
+                    // Center map on user location only
                     Button(action: {
-                        viewModel.centerMapOnUser()
+                        viewModel.centerMapOnUser() // Focus on user's location
                     }) {
                         Image("AccuracyIcon")
                             .resizable()
@@ -38,23 +41,26 @@ struct UserMainMapScreen: View {
                 }
             }
 
-            // Gray background for the bottom tab view
+            // Gray background for bottom tab view
             VStack {
-                Spacer() // Make space for the tab view at the bottom
+                Spacer()
                 AppColors.grayBackground
-                    .frame(height: 83) // Height of the bottom tab view
-                    .edgesIgnoringSafeArea(.bottom) // Make sure it extends to the bottom edge of the screen
+                    .frame(height: 83)
+                    .edgesIgnoringSafeArea(.bottom)
             }
             .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear {
-            viewModel.fetchRoutes()  // Ensure this method is called to fetch the routes
+            // Fetch route details on appearance and set up map
+            viewModel.fetchSelectedRoute(for: selectedRoute)
         }
     }
 }
 
 struct UserMainMapScreen_Previews: PreviewProvider {
     static var previews: some View {
-        UserMainMapScreen()
+        UserMainMapScreen(
+            selectedRoute: BusRoute(routeNumber: "119", name: "Maharagama - Dehiwala", stops: ["Maharagama", "Nugegoda", "Dehiwala"])
+        )
     }
 }

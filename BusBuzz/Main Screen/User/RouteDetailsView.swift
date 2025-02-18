@@ -5,13 +5,27 @@ struct RouteDetailsView: View {
     @State private var isReversed: Bool = false
     @State private var currentBusStopIndex: Int = 3  // Example: Bus is at index 3 (Dynamic Later)
     @State private var userLocationIndex: Int = 5    // Example: User is at index 5 (Dynamic Later)
+    @State private var navigateToMap = false
     @Environment(\.presentationMode) var presentationMode // For Closing Modal
+
+    // Define two sets of buses for the routes (Makumbura to Galle and Galle to Makumbura)
+    @State private var buses: [Bus] = [
+        Bus(id: UUID(), licensePlate: "NB-2586", busType: "Highway Bus", time: "8:30 AM", status: "Onboarding", finalDestination: "Galle"),
+        Bus(id: UUID(), licensePlate: "KO-2797", busType: "Highway Bus", time: "9:15 AM", status: "Scheduled", finalDestination: "Galle"),
+        Bus(id: UUID(), licensePlate: "TL-2776", busType: "Highway Bus", time: "10:00 AM", status: "Scheduled", finalDestination: "Galle")
+    ]
+
+    // Hardcoded swapped bus route cards for Galle to Makumbura
+    @State private var reversedBuses: [Bus] = [
+        Bus(id: UUID(), licensePlate: "TU-1592", busType: "Highway Bus", time: "8:30 AM", status: "Onboarding", finalDestination: "Makumbura"),
+        Bus(id: UUID(), licensePlate: "AT-5679", busType: "Highway Bus", time: "9:15 AM", status: "Scheduled", finalDestination: "Makumbura"),
+        Bus(id: UUID(), licensePlate: "YP-3751", busType: "Highway Bus", time: "10:00 AM", status: "Scheduled", finalDestination: "Makumbura")
+    ]
 
     var body: some View {
         VStack {
             // 🔹 Header Section with Swap, Title, and Close(X) Button
             HStack {
-                // 🔹 Swap Route Button
                 Button(action: { isReversed.toggle() }) {
                     Image(systemName: "arrow.up.arrow.down.circle.fill")
                         .resizable()
@@ -39,7 +53,6 @@ struct RouteDetailsView: View {
 
                 Spacer()
 
-                // Close Button (X) at the top right
                 Button(action: {
                     presentationMode.wrappedValue.dismiss()
                 }) {
@@ -55,66 +68,51 @@ struct RouteDetailsView: View {
 
             Divider()
 
-            // Scrollable Bus Stop List with Aligned Dots
-            ScrollView {
-                VStack(alignment: .leading) {
-                    let stops = isReversed ? route.stops.reversed() : route.stops
-                    ForEach(stops.indices, id: \.self) { index in
-                        HStack(alignment: .center) {
-                            // 🔹 Vertical Line & Stop Dots (Aligned)
-                            VStack(spacing: 0) {
-                                if index > 0 {
-                                    Rectangle()
-                                        .fill(AppColors.grayBackground)
-                                        .frame(width: 4, height: 15) // Connects upper line
-                                }
+            // Date moved up
+            if route.routeNumber == "Ex01" {
+                // Display bus cards for Ex01 Makumbura to Galle
+                VStack {
+                    Text("24th March 2025")
+                        .font(.headline)
+                        .foregroundColor(AppColors.buttonGreen)
+                        .padding(.top, 5)  // Pushed more to the top
 
-                                Circle()
-                                    .fill(index == currentBusStopIndex ? AppColors.buttonGreen : AppColors.grayBackground)
-                                    .frame(width: 10, height: 10) // Stop Indicator
-
-                                if index < stops.count - 1 {
-                                    Rectangle()
-                                        .fill(AppColors.grayBackground)
-                                        .frame(width: 4, height: 15) // Connects lower line
-                                }
-                            }
-                            .frame(width: 20) // Ensures consistent alignment
-
-                            // 🔹 Bus Stop Name (Left-Aligned)
-                            Text(stops[index])
-                                .font(.system(size: 16))
-                                .foregroundColor(.white)
-                                .padding(.leading, 8)
-
-                            Spacer()
-
-                            if index == currentBusStopIndex {
-                                Image(systemName: "bus.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.system(size: 20))
-                                    .transition(.slide)
-                            }
-
-                            if index == userLocationIndex {
-                                Image(systemName: "figure.walk")
-                                    .foregroundColor(.yellow)
-                                    .font(.system(size: 20))
-                                    .transition(.slide)
+                    ScrollView {
+                        VStack {
+                            ForEach(isReversed ? reversedBuses : buses) { bus in
+                                BusRouteCard(bus: bus)
+                                    .padding(.horizontal)
+                                    .padding(.bottom, 4) // Reduced the gap between cards
                             }
                         }
-                        .padding(.vertical, 5)
                     }
                 }
-                .padding(.horizontal)
+            } else {
+                // Default scrollable bus stop list for other routes
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        let stops = isReversed ? route.stops.reversed() : route.stops
+                        ForEach(stops.indices, id: \.self) { index in
+                            HStack {
+                                Text(stops[index])
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.white)
+                                    .padding(.leading, 8)
+                                Spacer()
+                            }
+                            .padding(.vertical, 5)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+                .background(AppColors.background)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .padding()
             }
-            .background(AppColors.background)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-            .padding()
 
-            // Track Bus Button (Now at the bottom)
+            // Track Bus Button
             Button(action: {
-                //Implement tracking bus logic here
+                navigateToMap = true
             }) {
                 Text("Track Bus")
                     .font(.system(size: 16, weight: .bold))
@@ -126,17 +124,113 @@ struct RouteDetailsView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding()
             }
+            .background(
+                NavigationLink("", destination: UserMainMapScreen(selectedRoute: route), isActive: $navigateToMap)
+                    .hidden()
+            )
         }
         .background(AppColors.background.edgesIgnoringSafeArea(.all))
     }
 
-    // Function to reverse route names dynamically (Fixes Issue)
+    // Hardcoded bus route cards for Ex01 Makumbura to Galle
+    var busRouteCards: [Bus] {
+        return [
+            Bus(id: UUID(), licensePlate: "NB-2586", busType: "Highway Bus", time: "8:30 AM", status: "Onboarding", finalDestination: "Galle"),
+            Bus(id: UUID(), licensePlate: "KO-2797", busType: "Highway Bus", time: "9:15 AM", status: "Scheduled", finalDestination: "Galle"),
+            Bus(id: UUID(), licensePlate: "TL-2776", busType: "Highway Bus", time: "10:00 AM", status: "Scheduled", finalDestination: "Galle")
+        ]
+    }
+
+    // Define Bus Route Card UI
+    struct BusRouteCard: View {
+        var bus: Bus
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text("Licence plate: \(bus.licensePlate)")
+                        .font(.subheadline)
+                        .foregroundColor(AppColors.background) // Blue text
+                    Spacer()
+                }
+                .padding(.bottom, 2)
+
+                HStack {
+                    Text("Bus Type: \(bus.busType)")
+                        .font(.subheadline)
+                        .foregroundColor(AppColors.background) // Blue text
+                    Spacer()
+                }
+                .padding(.bottom, 2)
+
+                HStack {
+                    Text("Final destination: \(bus.finalDestination)")
+                        .font(.subheadline)
+                        .foregroundColor(AppColors.background) // Blue text
+                    Spacer()
+                }
+                .padding(.bottom, 2)
+
+                HStack {
+                    Text("Time: \(bus.time)")
+                        .font(.subheadline)
+                        .foregroundColor(AppColors.background) // Blue text
+                    Spacer()
+                }
+                .padding(.bottom, 2)
+
+                // Status and Dot aligned to top-right
+                HStack {
+                    Spacer()
+                    HStack {
+                        Text(bus.status)
+                            .font(.caption)
+                            .foregroundColor(statusColor(for: bus.status))
+
+                        // Status Dot
+                        Circle()
+                            .fill(statusColor(for: bus.status))
+                            .frame(width: 12, height: 12)
+                    }
+                    .padding(8)
+                    .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // No rounded edges
+                }
+            }
+            .frame(maxWidth: .infinity) // Makes the card bigger
+            .padding(.vertical, 4)  // Reduced gap between the cards
+            .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // Card background color (No rounded edges)
+        }
+
+        func statusColor(for status: String) -> Color {
+            switch status {
+            case "Onboarding":
+                return Color.green
+            case "Scheduled":
+                return Color.yellow
+            default:
+                return Color.red
+            }
+        }
+    }
+
+    // Define Bus model
+    struct Bus: Identifiable {
+        var id: UUID
+        var licensePlate: String
+        var busType: String
+        var time: String
+        var status: String
+        var finalDestination: String
+        var busRoute: String = "Ex-01 Makumbura-Galle"
+    }
+
+    // Helper methods to determine reversed name and cleaned route name
     func getReversedRouteName() -> String {
         switch route.routeNumber {
         case "119":
             return isReversed ? "Dehiwala to Maharagama" : "Maharagama to Dehiwala"
         case "120":
-            return isReversed ? "Colombo to Piliyandala" : "Piliyandala to Colombo"
+            return isReversed ? "Colombo to Kesbewa" : "Kesbewa to Colombo"
         case "Ex01":
             return isReversed ? "Galle to Makumbura" : "Makumbura to Galle"
         default:
@@ -144,12 +238,17 @@ struct RouteDetailsView: View {
         }
     }
 
-    // Function to REMOVE Duplicate Route Number (Fix for the issue)
     func getCleanRouteName() -> String {
         let components = route.name.components(separatedBy: " - ")
         if components.count == 2 {
             return components[1].trimmingCharacters(in: .whitespaces)
         }
         return route.name
+    }
+}
+
+struct RouteDetailsView_Previews: PreviewProvider {
+    static var previews: some View {
+        RouteDetailsView(route: BusRoute.allRoutes[2]) // Ex01 route
     }
 }

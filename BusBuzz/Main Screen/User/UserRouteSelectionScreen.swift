@@ -2,7 +2,7 @@ import SwiftUI
 
 struct UserRouteSelectionScreen: View {
     @StateObject private var viewModel = UserRouteSelectionViewModel()
-    @State private var selectedRoute: BusRoute? = nil
+    @Binding var selectedRoute: BusRoute?  // ✅ Changed to @Binding to allow updates
 
     var body: some View {
         ZStack {
@@ -49,7 +49,7 @@ struct UserRouteSelectionScreen: View {
                     viewModel.showAllRoutes()
                 }
 
-                Spacer() // Ensures the content stays above the tab view area
+                Spacer() 
             }
 
             // Gray Background for the Bottom TabBar (if required)
@@ -94,6 +94,6 @@ class UserRouteSelectionViewModel: ObservableObject {
 
 struct UserRouteSelectionScreen_Previews: PreviewProvider {
     static var previews: some View {
-        UserRouteSelectionScreen()
+        UserRouteSelectionScreen(selectedRoute: .constant(nil))
     }
 }

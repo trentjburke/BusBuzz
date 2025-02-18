@@ -2,21 +2,12 @@ import SwiftUI
 import GoogleMaps
 import CoreLocation
 
-class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var userLocation: CLLocationCoordinate2D?
     @Published var polylinePath: GMSPath?
-    
+
     private var locationManager = CLLocationManager()
     private var googleMapView: GMSMapView?
-
-    let startLocation = CLLocationCoordinate2D(latitude: 6.846088884675021, longitude: 79.92613078770619)  // **Maharagama**
-    let endLocation = CLLocationCoordinate2D(latitude: 6.8512, longitude: 79.8650)  // **Dehiwala**
-
-    let route2Start = CLLocationCoordinate2D(latitude: 6.839114621203832, longitude: 79.97635657102828)  // **Makumbura**
-    let route2End = CLLocationCoordinate2D(latitude: 6.032418904032479, longitude: 80.21488188991984)  // **Galle**
-
-    let route3Start = CLLocationCoordinate2D(latitude: 6.8001102233793365, longitude: 79.9415064597752)  // **Kesbewa**
-    let route3End = CLLocationCoordinate2D(latitude: 6.9344795600214475, longitude: 79.85462959050028)  // **Pettah**
 
     private let googleMapsAPIKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
 
@@ -31,22 +22,36 @@ class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         locationManager.startUpdatingLocation()
     }
 
-    // **Fetching Routes and Polylines**
-    func fetchRoutes() {
-        // Default Route (Maharagama to Dehiwala)
-        fetchRoute(from: startLocation, to: endLocation)
+    // Fetches the route polyline based on the selected route
+    func fetchSelectedRoute(for route: BusRoute) {
+        var origin: CLLocationCoordinate2D
+        var destination: CLLocationCoordinate2D
 
-        // Additional Routes (Makumbura to Galle, Kesbewa to Pettah)
-        fetchRoute(from: route2Start, to: route2End)
-        fetchRoute(from: route3Start, to: route3End)
+        // Check which route is selected and set origin and destination accordingly
+        switch route.routeNumber {
+        case "119":
+            origin = CLLocationCoordinate2D(latitude: 6.8461, longitude: 79.9261)  // Maharagama
+            destination = CLLocationCoordinate2D(latitude: 6.8512, longitude: 79.8650) // Dehiwala
+        case "120":
+            origin = CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415)  // Kesbewa
+            destination = CLLocationCoordinate2D(latitude: 6.9345, longitude: 79.8546) // Pettah
+        case "Ex01":
+            origin = CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763) // Makumbura
+            destination = CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149) // Galle
+        default:
+            return
+        }
+
+        fetchRoute(from: origin, to: destination)
     }
 
+    // Fetches the polyline for the selected route using Google's Directions API
     private func fetchRoute(from origin: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D) {
         let directionsURL = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin.latitude),\(origin.longitude)&destination=\(destination.latitude),\(destination.longitude)&key=\(googleMapsAPIKey)"
         
         guard let url = URL(string: directionsURL) else { return }
 
-        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+        let task = URLSession.shared.dataTask(with: url) { (data: Data?, response: URLResponse?, error: Error?) in
             if let error = error {
                 print("Error fetching route: \(error.localizedDescription)")
                 return
@@ -60,6 +65,7 @@ class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
                 if let routes = directionsResponse.routes, let route = routes.first {
                     DispatchQueue.main.async {
                         self.decodePolyline(encodedPolyline: route.overview_polyline.points)
+                        self.centerMapOnRoute()
                     }
                 }
             } catch {
@@ -69,7 +75,7 @@ class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         task.resume()
     }
 
-    // **Decoding Polyline**
+    // Decodes the polyline returned by the API and updates the map
     func decodePolyline(encodedPolyline: String) {
         if let path = GMSPath(fromEncodedPath: encodedPolyline) {
             DispatchQueue.main.async {
@@ -80,17 +86,29 @@ class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         }
     }
 
+    // Centers the map on the user's location
     func centerMapOnUser() {
         guard let location = userLocation, let mapView = googleMapView else { return }
         let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 15.0)
         mapView.animate(to: camera)
     }
 
+    // Centers the map on the selected route's polyline
+    func centerMapOnRoute() {
+        guard let polyline = polylinePath, let mapView = googleMapView else { return }
+        
+        // Update the map to focus on the route polyline
+        let bounds = GMSCoordinateBounds(path: polyline)
+        let update = GMSCameraUpdate.fit(bounds, withPadding: 50.0)
+        mapView.animate(with: update)
+    }
+
+    // Sets the Google Map view when it's ready
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
     }
 
-    // **Update User Location**
+    // Updates the user's location when the location manager detects a change
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latestLocation = locations.last else { return }
         DispatchQueue.main.async {
@@ -100,6 +118,7 @@ class MainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     }
 }
 
+// DirectionsResponse Struct (to fix the missing struct error)
 struct DirectionsResponse: Codable {
     let routes: [Route]?
 }

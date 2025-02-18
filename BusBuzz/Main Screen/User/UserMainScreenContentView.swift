@@ -2,50 +2,54 @@ import SwiftUI
 
 struct UserMainScreenContentView: View {
     @State private var selectedTab = 0
+    @State private var selectedRoute: BusRoute? = nil  // ✅ Added selectedRoute to handle navigation
 
     var body: some View {
         ZStack {
             // Apply blue background to the entire screen including tab area
             AppColors.background
-                
+
             VStack(spacing: 0) {
                 Spacer()
 
                 // TabView with custom background and icon styles
                 TabView(selection: $selectedTab) {
                     // Menu Tab
-                    UserRouteSelectionScreen()
+                    UserRouteSelectionScreen(selectedRoute: $selectedRoute)  // ✅ Pass selectedRoute to update when a user selects a route
                         .tabItem {
-                            Image(systemName: "list.bullet")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(selectedTab == 0 ? AppColors.buttonGreen : AppColors.background)
-                            Text("Menu")
+                            VStack {
+                                Image(systemName: "list.bullet")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 25, height: 25)
+                                Text("Menu")
+                            }
                         }
                         .tag(0)
 
                     // Map Tab
-                    UserMainMapScreen()
+                    UserMainMapScreen(selectedRoute: selectedRoute ?? BusRoute.defaultRoute)  // ✅ Ensuring a valid route
                         .tabItem {
-                            Image(systemName: "map")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(selectedTab == 1 ? AppColors.buttonGreen : AppColors.background)
-                            Text("Map")
+                            VStack {
+                                Image(systemName: "map")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 25, height: 25)
+                                Text("Map")
+                            }
                         }
                         .tag(1)
 
                     // Settings Tab
                     UserSettingsScreen()
                         .tabItem {
-                            Image(systemName: "gear")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(selectedTab == 2 ? AppColors.buttonGreen : AppColors.background)
-                            Text("Settings")
+                            VStack {
+                                Image(systemName: "gear")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 25, height: 25)
+                                Text("Settings")
+                            }
                         }
                         .tag(2)
                 }

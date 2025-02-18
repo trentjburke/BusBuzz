@@ -16,7 +16,7 @@ struct BusOperatorSettingsScreen: View {
                     HStack {
                         Text("Settings")
                             .font(.system(size: 40, weight: .bold))
-                            .foregroundColor(.white) 
+                            .foregroundColor(.white)
                         Spacer()
                         Image("Bus_Driver_Icon_Trial")
                             .resizable()
@@ -73,6 +73,15 @@ struct BusOperatorSettingsScreen: View {
                     Spacer()
                 }
                 .padding(.top, 20)
+
+                // Gray background for the bottom tab view
+                VStack {
+                    Spacer()
+                    AppColors.grayBackground
+                        .frame(height: 83)
+                        .edgesIgnoringSafeArea(.bottom)
+                }
+                .edgesIgnoringSafeArea(.bottom)
             }
             .fullScreenCover(isPresented: $showLoginScreen) {
                 BusOperatorLoginScreen()
@@ -93,6 +102,7 @@ struct BusOperatorSettingsScreen: View {
         print("Location sharing resumed.")
     }
 }
+
 struct BusOperatorSettingsScreen_Previews: PreviewProvider {
     static var previews: some View {
         BusOperatorSettingsScreen()
