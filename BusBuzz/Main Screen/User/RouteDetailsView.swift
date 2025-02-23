@@ -87,26 +87,49 @@ struct RouteDetailsView: View {
                         }
                     }
                 }
-            } else {
-                // Default scrollable bus stop list for other routes
+            } else if route.routeNumber == "119" || route.routeNumber == "120" {
+                // Default scrollable bus stop list for routes 119 and 120
                 ScrollView {
-                    VStack(alignment: .leading) {
-                        let stops = isReversed ? route.stops.reversed() : route.stops
-                        ForEach(stops.indices, id: \.self) { index in
-                            HStack {
-                                Text(stops[index])
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.white)
-                                    .padding(.leading, 8)
-                                Spacer()
+                    HStack(alignment: .top, spacing: 12) {
+                        // Dotted line and one dot per stop
+                        VStack(spacing: 6) {  // Adjusted spacing to ensure the line starts and ends at the right position
+                            ForEach(route.stops.indices, id: \.self) { index in
+                                if index == 0 || index == route.stops.count - 1 {
+                                    // Start and End dots (green)
+                                    Circle()
+                                        .fill(Color.gray)
+                                        .frame(width: 12, height: 12)
+                                } else {
+                                    // Regular dots (Gray)
+                                    Circle()
+                                        .fill(Color.gray)
+                                        .frame(width: 12, height: 12)
+                                }
+                                if index != route.stops.count - 1 {
+                                    Rectangle()
+                                        .fill(Color.gray)
+                                        .frame(width: 2, height: 15) // Shortened the line height to make the line shorter
+                                }
                             }
-                            .padding(.vertical, 5)
                         }
+                        VStack(alignment: .leading) {
+                            let stops = isReversed ? route.stops.reversed() : route.stops
+                            ForEach(stops.indices, id: \.self) { index in
+                                HStack {
+                                    Text(stops[index].name) // Assuming `name` is used to show the bus stop name
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(.leading, 8)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 5)
+                            }
+                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
                 .background(AppColors.background)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .clipShape(RoundedRectangle(cornerRadius: 2))
                 .padding()
             }
 
@@ -141,64 +164,58 @@ struct RouteDetailsView: View {
         ]
     }
 
-    // Define Bus Route Card UI
     struct BusRouteCard: View {
         var bus: Bus
 
         var body: some View {
             VStack {
+                // Add padding for top space
                 HStack {
-                    Text("Licence plate: \(bus.licensePlate)")
-                        .font(.subheadline)
-                        .foregroundColor(AppColors.background) // Blue text
-                    Spacer()
-                }
-                .padding(.bottom, 2)
-
-                HStack {
-                    Text("Bus Type: \(bus.busType)")
-                        .font(.subheadline)
-                        .foregroundColor(AppColors.background) // Blue text
-                    Spacer()
-                }
-                .padding(.bottom, 2)
-
-                HStack {
-                    Text("Final destination: \(bus.finalDestination)")
-                        .font(.subheadline)
-                        .foregroundColor(AppColors.background) // Blue text
-                    Spacer()
-                }
-                .padding(.bottom, 2)
-
-                HStack {
-                    Text("Time: \(bus.time)")
-                        .font(.subheadline)
-                        .foregroundColor(AppColors.background) // Blue text
-                    Spacer()
-                }
-                .padding(.bottom, 2)
-
-                // Status and Dot aligned to top-right
-                HStack {
-                    Spacer()
-                    HStack {
-                        Text(bus.status)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Licence plate: \(bus.licensePlate)")
                             .font(.caption)
-                            .foregroundColor(statusColor(for: bus.status))
+                            .foregroundColor(AppColors.background) // Blue text
 
-                        // Status Dot
-                        Circle()
-                            .fill(statusColor(for: bus.status))
-                            .frame(width: 12, height: 12)
+                        Text("Bus Type: \(bus.busType)")
+                            .font(.caption)
+                            .foregroundColor(AppColors.background)
+
+                        Text("Final destination: \(bus.finalDestination)")
+                            .font(.caption)
+                            .foregroundColor(AppColors.background)
+
+                        Text("Time: \(bus.time)")
+                            .font(.caption)
+                            .foregroundColor(AppColors.background)
                     }
-                    .padding(8)
-                    .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // No rounded edges
+                    
+                    Spacer()
+
+                    // Status and Dot aligned to top-right
+                    VStack {
+                        HStack {
+                            Spacer()
+                            HStack {
+                                Text(bus.status)
+                                    .font(.caption)
+                                    .foregroundColor(statusColor(for: bus.status))
+
+                                // Status Dot
+                                Circle()
+                                    .fill(statusColor(for: bus.status))
+                                    .frame(width: 12, height: 13)
+                            }
+                            .padding(8)
+                            .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // No rounded edges
+                        }
+                        Spacer()
+                    }
                 }
+                .padding(8)
+                .frame(maxWidth: .infinity) // Makes the card smaller
+                .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // Card background color (No rounded edges)
             }
-            .frame(maxWidth: .infinity) // Makes the card bigger
-            .padding(.vertical, 4)  // Reduced gap between the cards
-            .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // Card background color (No rounded edges)
+            .padding(.vertical, 1)  // Reduced gap between the cards
         }
 
         func statusColor(for status: String) -> Color {
@@ -213,7 +230,6 @@ struct RouteDetailsView: View {
         }
     }
 
-    // Define Bus model
     struct Bus: Identifiable {
         var id: UUID
         var licensePlate: String
@@ -224,7 +240,6 @@ struct RouteDetailsView: View {
         var busRoute: String = "Ex-01 Makumbura-Galle"
     }
 
-    // Helper methods to determine reversed name and cleaned route name
     func getReversedRouteName() -> String {
         switch route.routeNumber {
         case "119":
@@ -244,11 +259,5 @@ struct RouteDetailsView: View {
             return components[1].trimmingCharacters(in: .whitespaces)
         }
         return route.name
-    }
-}
-
-struct RouteDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        RouteDetailsView(route: BusRoute.allRoutes[2]) // Ex01 route
     }
 }

@@ -22,8 +22,7 @@ struct BusOperatorSignUpScreen: View {
     
     let busTypes = ["Government Bus", "Private Bus", "Highway Bus"]
     let busRoutes = [
-        "120 Colombo - Horana",
-        "120 Colombo - Piliyandala",
+        "120 Colombo - Kesbewa",
         "119 Dehiwala - Maharagama",
         "Ex-01 Colombo Makumbara Bus Station - Galle Central Bus Station"
     ]
@@ -33,13 +32,13 @@ struct BusOperatorSignUpScreen: View {
             AppColors.background
                 .ignoresSafeArea()
             
-            VStack(spacing: 05) { // Reduced spacing to bring elements closer
+            VStack(spacing: 05) {
                 // Logo
                 Image("BusBuzz_Logo_Without_Slogan")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 400, height: 300) // Keeps original dimensions
-                    .padding(.top, -12) // Moves logo slightly down and closer to the top
+                    .padding(.top, -12)
                 
                 // Title
                 Text("Create Bus Operator Account")
