@@ -23,21 +23,7 @@ struct BusOperatorMainMapScreen: View {
 
             VStack {
                 Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        viewModel.centerMapOnBus()
-                    }) {
-                        Image("AccuracyIcon")
-                            .resizable()
-                            .frame(width: 37.5, height: 37.5)
-                            .background(Color.white.opacity(0.8))
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-                    }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 50)
-                }
+                
             }
 
             // Gray background for the bottom tab view
@@ -55,6 +41,7 @@ struct BusOperatorMainMapScreen: View {
                 viewModel.loadRouteOnMap(route: route) // Update the map view based on the selected route
             }
             viewModel.startTrackingBus(for: selectedRoute) // Start tracking the bus for the selected route
+            viewModel.enableMyLocation()
         }
     }
 }

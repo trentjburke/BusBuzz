@@ -7,6 +7,10 @@
 		<dict>
 			<key>CFBundleURLName</key>
 			<string></string>
+            <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>com.googleusercontent.apps.554442860556-7tkuf6qvlrbruqm5rn9567dj06nfqkrh</string>
+                    </array>
 		</dict>
 	</array>
 	<key>com.googleusercontent.apps.554442860556-7tkuf6qvlrbruqm5rn9567dj06nfqkrh</key>
@@ -22,5 +26,15 @@
 		<string>remote-notification</string>
 		<string></string>
 	</array>
+    <key>GMSApiKey</key>
+    <string>AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to track your bus route.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need continuous access to your location for bus tracking.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need continuous access to your location to track your bus in real-time.</string>
 </dict>
 </plist>

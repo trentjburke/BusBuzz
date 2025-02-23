@@ -119,23 +119,34 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     }
 
     // Center the map on the bus location
-    func centerMapOnBus() {
-        guard let location = busLocation, let mapView = googleMapView else { return }
-        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 15.0)
-        mapView.animate(to: camera)
-    }
+//    func centerMapOnBus() {
+//        guard let location = busLocation, let mapView = googleMapView else { return }
+//        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 15.0)
+//        mapView.animate(to: camera)
+//    }
 
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
+        self.googleMapView?.isMyLocationEnabled = true  // Enable blue dot
+            self.googleMapView?.settings.myLocationButton = true // Show location button
+        self.googleMapView?.settings.zoomGestures = true
+            self.googleMapView?.settings.scrollGestures = true
+            self.googleMapView?.settings.rotateGestures = true
+            self.googleMapView?.settings.tiltGestures = true
     }
 
     // Real-time updates when the bus moves
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latestLocation = locations.last else { return }
         DispatchQueue.main.async {
-            self.busLocation = latestLocation.coordinate
-            self.centerMapOnBus()
-        }
+                self.busLocation = latestLocation.coordinate
+                self.googleMapView?.isMyLocationEnabled = true  // Ensure the blue dot is visible
+                
+                let camera = GMSCameraPosition.camera(withLatitude: latestLocation.coordinate.latitude,
+                                                      longitude: latestLocation.coordinate.longitude,
+                                                      zoom: 15.0)
+                self.googleMapView?.animate(to: camera)
+            }
     }
 
     // Helper function to encode coordinates into a polyline string (Google Maps format)
@@ -176,5 +187,11 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
         encoded.append(Character(UnicodeScalar(coord + 63)!))
 
         return encoded
+    }
+    func enableMyLocation() {
+        DispatchQueue.main.async {
+            self.googleMapView?.isMyLocationEnabled = true
+            self.googleMapView?.settings.myLocationButton = true
+        }
     }
 }

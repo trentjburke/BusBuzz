@@ -23,22 +23,6 @@ struct UserMainMapScreen: View {
 
             VStack {
                 Spacer()
-                HStack {
-                    Spacer()
-                    // Center map on user location only
-                    Button(action: {
-                        viewModel.centerMapOnUser() // Focus on user's location
-                    }) {
-                        Image("AccuracyIcon")
-                            .resizable()
-                            .frame(width: 37.5, height: 37.5)
-                            .background(Color.white.opacity(0.8))
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-                    }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 50)
-                }
             }
 
             // Gray background for bottom tab view
@@ -53,6 +37,7 @@ struct UserMainMapScreen: View {
         .onAppear {
             // Fetch route details on appearance and set up map
             viewModel.fetchSelectedRoute(for: selectedRoute)
+            viewModel.enableMyLocation()
         }
     }
 }

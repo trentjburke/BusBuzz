@@ -157,7 +157,6 @@ struct BusOperatorLoginScreen: View {
             return
         }
 
-        // Firebase REST API
         let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
         let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=\(apiKey)")!
 
@@ -197,6 +196,13 @@ struct BusOperatorLoginScreen: View {
                     self.showAlert = true
                 }
                 return
+            }
+
+            // ✅ Save the UID in UserDefaults for session persistence
+            if let userId = json["localId"] as? String {
+                UserDefaults.standard.set(userId, forKey: "user_uid")
+                UserDefaults.standard.set("bus_operator", forKey: "user_type")
+                print("✅ UID Saved: \(userId)")
             }
 
             DispatchQueue.main.async {

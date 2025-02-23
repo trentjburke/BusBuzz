@@ -1,5 +1,9 @@
 import SwiftUI
 
+import FirebaseDatabase
+import Firebase
+import FirebaseAuth
+
 struct UserSettingsScreen: View {
     @State private var showLoginScreen = false
 
@@ -38,9 +42,9 @@ struct UserSettingsScreen: View {
 
                         SettingsRow(iconName: "Privacy policy icon", title: "Privacy Policy", textColor: AppColors.background, destination: AnyView(PrivacyPolicyPDFView()))
 
-                        SettingsRow(iconName: "Logout Icon", title: "Logout", textColor: AppColors.background, action: {
-                            showLoginScreen = true
-                        })
+                        SettingsRow(iconName: "Logout Icon", title: "Logout", textColor: AppColors.background) {
+                            handleLogout()
+                        }
                     }
 
                     Spacer()
@@ -63,6 +67,26 @@ struct UserSettingsScreen: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
+    }
+    private func handleLogout() {
+        guard let uid = UserDefaults.standard.string(forKey: "user_uid") else { return }
+        
+        // Set the bus operator as offline in Firebase
+        let dbRef = Database.database().reference().child("busOperators").child(uid)
+        dbRef.updateChildValues(["isOnline": false]) { error, _ in
+            if let error = error {
+                print("❌ Failed to go offline during logout: \(error.localizedDescription)")
+            } else {
+                print("✅ User set to offline in Firebase.")
+            }
+        }
+
+        // Clear stored UID so the session doesn't persist
+        UserDefaults.standard.removeObject(forKey: "user_uid")
+        print("✅ UID removed. User is logged out.")
+
+        // Navigate back to the login screen
+        showLoginScreen = true
     }
 }
 

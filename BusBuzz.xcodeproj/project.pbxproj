@@ -7,16 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C499D9F2D6AE5C00090E3C0 /* GoogleMaps.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E112D4A95E000A921BB /* GoogleMaps.xcframework */; };
+		7C499DA02D6AE5D30090E3C0 /* GoogleMapsM4B.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E122D4A95E000A921BB /* GoogleMapsM4B.xcframework */; };
 		7E048C012D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7E048BFF2D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf */; };
 		7E048C022D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7E048C002D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf */; };
 		7E5474642D4B45580050D7CC /* GoogleMaps.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E112D4A95E000A921BB /* GoogleMaps.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7E5474672D4B455E0050D7CC /* GoogleMapsM4B.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E122D4A95E000A921BB /* GoogleMapsM4B.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		7E57DE932D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
-		7E57DE942D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
-		7E57DE952D4006F2003359F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */; };
-		7E8C8AF12D4B527500F6E47D /* GoogleMaps.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E112D4A95E000A921BB /* GoogleMaps.xcframework */; };
 		7E8C8AF22D4B528C00F6E47D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51D392D4A60ED00A921BB /* CoreLocation.framework */; };
-		7E8C8AF32D4B52B000F6E47D /* GoogleMapsM4B.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EE51E122D4A95E000A921BB /* GoogleMapsM4B.xcframework */; };
 		7E8C8AF62D4B5E8B00F6E47D /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8AF52D4B5E8B00F6E47D /* FirebaseAppCheck */; };
 		7E8C8AF82D4B5E8B00F6E47D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8AF72D4B5E8B00F6E47D /* FirebaseAuth */; };
 		7E8C8AFA2D4B5E8B00F6E47D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8AF92D4B5E8B00F6E47D /* FirebaseCore */; };
@@ -67,7 +64,6 @@
 /* Begin PBXFileReference section */
 		7E048BFF2D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BussBuzz Emergency Services Contact List.pdf"; sourceTree = "<group>"; };
 		7E048C002D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BussBuzz User Application Privacy Policy.pdf"; sourceTree = "<group>"; };
-		7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7E5CA83C2D27C19C0004ADE6 /* BusBuzz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusBuzz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA8532D27C19D0004ADE6 /* BusBuzzTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA85D2D27C19D0004ADE6 /* BusBuzzUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,6 +79,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7C499DA12D6AF2780090E3C0 /* Exceptions for "BusBuzz" folder in "BusBuzzTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 7E5CA8522D27C19D0004ADE6 /* BusBuzzTests */;
+		};
+		7C499DA22D6AF2780090E3C0 /* Exceptions for "BusBuzz" folder in "BusBuzzUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 7E5CA85C2D27C19D0004ADE6 /* BusBuzzUITests */;
+		};
 		7E5CA8652D27C19D0004ADE6 /* Exceptions for "BusBuzz" folder in "BusBuzz" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -97,6 +107,8 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				7E5CA8652D27C19D0004ADE6 /* Exceptions for "BusBuzz" folder in "BusBuzz" target */,
+				7C499DA12D6AF2780090E3C0 /* Exceptions for "BusBuzz" folder in "BusBuzzTests" target */,
+				7C499DA22D6AF2780090E3C0 /* Exceptions for "BusBuzz" folder in "BusBuzzUITests" target */,
 			);
 			path = BusBuzz;
 			sourceTree = "<group>";
@@ -132,11 +144,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C499DA02D6AE5D30090E3C0 /* GoogleMapsM4B.xcframework in Frameworks */,
+				7C499D9F2D6AE5C00090E3C0 /* GoogleMaps.xcframework in Frameworks */,
 				7E8C8AF62D4B5E8B00F6E47D /* FirebaseAppCheck in Frameworks */,
 				7E8C8AF82D4B5E8B00F6E47D /* FirebaseAuth in Frameworks */,
 				7E8C8B022D4B5E8B00F6E47D /* FirebaseMessaging in Frameworks */,
 				7E8C8B002D4B5E8B00F6E47D /* FirebaseInAppMessaging-Beta in Frameworks */,
-				7E8C8AF32D4B52B000F6E47D /* GoogleMapsM4B.xcframework in Frameworks */,
 				7E8C8B092D4B5EE000F6E47D /* GoogleSignInSwift in Frameworks */,
 				7E8C8B072D4B5EE000F6E47D /* GoogleSignIn in Frameworks */,
 				7E8C8AFE2D4B5E8B00F6E47D /* FirebaseFunctions in Frameworks */,
@@ -144,7 +157,6 @@
 				7E8C8AFA2D4B5E8B00F6E47D /* FirebaseCore in Frameworks */,
 				7E8C8B042D4B5E8B00F6E47D /* FirebaseStorage in Frameworks */,
 				7E8C8AFC2D4B5E8B00F6E47D /* FirebaseDatabase in Frameworks */,
-				7E8C8AF12D4B527500F6E47D /* GoogleMaps.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,7 +171,6 @@
 				7EE51D332D4A432400A921BB /* Icons Settings.svg */,
 				7E048BFF2D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf */,
 				7E048C002D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf */,
-				7E57DE922D4006F2003359F1 /* GoogleService-Info.plist */,
 				7E5CA83E2D27C19C0004ADE6 /* BusBuzz */,
 				7E5CA8562D27C19D0004ADE6 /* BusBuzzTests */,
 				7E5CA8602D27C19D0004ADE6 /* BusBuzzUITests */,
@@ -317,6 +328,7 @@
 			packageReferences = (
 				7E8C8AF42D4B5E8B00F6E47D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7E8C8B052D4B5EE000F6E47D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				7C499D9E2D6AE3C10090E3C0 /* XCLocalSwiftPackageReference "../google-maps-ios-utils" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7E5CA83D2D27C19C0004ADE6 /* Products */;
@@ -340,7 +352,6 @@
 				7EE51D352D4A432400A921BB /* Icons Settings.svg in Resources */,
 				7E048C012D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf in Resources */,
 				7E048C022D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf in Resources */,
-				7E57DE932D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,7 +359,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E57DE952D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +366,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E57DE942D4006F2003359F1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +426,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -447,6 +457,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -687,6 +698,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		7C499D9E2D6AE3C10090E3C0 /* XCLocalSwiftPackageReference "../google-maps-ios-utils" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../google-maps-ios-utils";
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		7E8C8AF42D4B5E8B00F6E47D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {

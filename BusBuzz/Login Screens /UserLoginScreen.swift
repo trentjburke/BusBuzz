@@ -260,6 +260,13 @@ struct UserLoginScreen: View {
                 }
                 return
             }
+            
+            if let userId = json["localId"] as? String {
+                        UserDefaults.standard.set(userId, forKey: "user_uid")
+                UserDefaults.standard.set("user", forKey: "user_type")
+                        print("✅ UID Saved: \(userId)")
+                    }
+
 
             DispatchQueue.main.async {
                 self.navigateToMainScreen = true

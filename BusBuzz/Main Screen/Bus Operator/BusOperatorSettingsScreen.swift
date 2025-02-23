@@ -1,8 +1,13 @@
 import SwiftUI
+import FirebaseDatabase
+import Firebase
+import FirebaseAuth
+import CoreLocation
 
 struct BusOperatorSettingsScreen: View {
     @State private var isOnline: Bool = true // State for the Online/Offline switch
     @State private var showLoginScreen = false // For showing login screen when logout is tapped
+    @StateObject private var locationManager = LocationManager()
 
     var body: some View {
         NavigationView {
@@ -66,7 +71,7 @@ struct BusOperatorSettingsScreen: View {
                         SettingsRow(iconName: "Privacy policy icon", title: "Privacy Policy", textColor: AppColors.background, destination: AnyView(PrivacyPolicyPDFView()))
 
                         SettingsRow(iconName: "Logout Icon", title: "Logout", textColor: AppColors.background) {
-                            showLoginScreen = true
+                            handleLogout()
                         }
                     }
 
@@ -92,14 +97,70 @@ struct BusOperatorSettingsScreen: View {
 
     // Function to stop location sharing
     private func stopSharingLocation() {
-        // Logic to stop sharing the bus operator's location
-        print("Location sharing stopped.")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let dbRef = Database.database().reference().child("busOperators").child(uid)
+        dbRef.updateChildValues(["isOnline": false]) { error, _ in
+            if let error = error {
+                print("Failed to go offline: \(error.localizedDescription)")
+            } else {
+                print("Bus operator is now offline.")
+            }
+        }
     }
 
-    // Function to start location sharing
+    // Function to start location sharing (Go Online)
     private func startSharingLocation() {
-        // Logic to resume sharing the bus operator's location
-        print("Location sharing resumed.")
+        if Auth.auth().currentUser == nil {
+            print("❌ User is NOT authenticated. Cannot write to Firebase.")
+        } else {
+            print("✅ User is authenticated: \(Auth.auth().currentUser?.uid ?? "Unknown UID")")
+        }
+        guard let uid = Auth.auth().currentUser?.uid else {
+                print("❌ No authenticated user found. User must log in.")
+                return
+            }
+
+        let dbRef = Database.database().reference().child("busOperators").child(uid)
+
+        if let location = locationManager.userLocation {
+            let locationData: [String: Any] = [
+                "isOnline": true,
+                "latitude": location.latitude,
+                "longitude": location.longitude
+            ]
+            
+            dbRef.updateChildValues(locationData) { error, _ in
+                if let error = error {
+                    print("❌ Failed to go online: \(error.localizedDescription)")
+                } else {
+                    print("✅ Bus operator is now online.")
+                }
+            }
+        } else {
+            print("❌ Location not available.")
+        }
+    }
+    // Function to handle logout
+    private func handleLogout() {
+        guard let uid = UserDefaults.standard.string(forKey: "user_uid") else { return }
+        
+        // Set the bus operator as offline in Firebase
+        let dbRef = Database.database().reference().child("busOperators").child(uid)
+        dbRef.updateChildValues(["isOnline": false]) { error, _ in
+            if let error = error {
+                print("❌ Failed to go offline during logout: \(error.localizedDescription)")
+            } else {
+                print("✅ User set to offline in Firebase.")
+            }
+        }
+
+        // Clear stored UID so the session doesn't persist
+        UserDefaults.standard.removeObject(forKey: "user_uid")
+        print("✅ UID removed. User is logged out.")
+
+        // Navigate back to the login screen
+        showLoginScreen = true
     }
 }
 
