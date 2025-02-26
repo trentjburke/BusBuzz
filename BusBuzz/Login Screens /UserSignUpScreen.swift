@@ -12,7 +12,7 @@ struct UserSignUpScreen: View {
     @State private var userIDError: Bool = false
     @State private var passwordError: Bool = false
     @State private var confirmPasswordError: Bool = false
-    @State private var navigateToSignIn: Bool = false // Navigation trigger
+    @State private var navigateToSignIn: Bool = false
 
     var body: some View {
         ZStack {

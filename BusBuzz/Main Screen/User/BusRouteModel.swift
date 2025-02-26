@@ -5,7 +5,7 @@ struct BusRoute: Identifiable {
     let id = UUID()
     let routeNumber: String
     let name: String
-    let stops: [(name: String, location: CLLocationCoordinate2D)]  // Stops now include location coordinates
+    let stops: [(name: String, location: CLLocationCoordinate2D)] 
     var currentBusStop: String?
 
     // Default route with actual stops and coordinates

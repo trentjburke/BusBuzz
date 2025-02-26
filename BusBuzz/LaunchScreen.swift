@@ -3,20 +3,18 @@ import SwiftUI
 struct LaunchScreen: View {
     @State private var navigateToBusOperatorMainScreen = false
     @State private var navigateToUserMainScreen = false
-    @State private var isLoading = true // ✅ Prevent UI flickering
+    @State private var isLoading = true
 
     var body: some View {
         Group {
             if isLoading {
-                // Show a blank screen or a loading indicator
                 Color.black.ignoresSafeArea()
             } else if navigateToBusOperatorMainScreen {
-                // ✅ If UID is found, go to Main Screen
                 BusOperatorMainScreenContentView()
             } else if navigateToUserMainScreen {
                 UserMainScreenContentView()
             } else {
-                // ✅ If UID is not found, show the launch screen
+                // If UID is not found, display the launch screen
                 NavigationStack {
                     ZStack {
                         AppColors.background
@@ -102,15 +100,13 @@ struct LaunchScreen: View {
                 print("❌ No stored UID, user must log in.")
             }
             
-            // ✅ Ensure UI is only shown after the check
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 isLoading = false
             }
         }
     }
 }
 
-// Preview
 struct LaunchScreen_Previews: PreviewProvider {
     static var previews: some View {
         LaunchScreen()

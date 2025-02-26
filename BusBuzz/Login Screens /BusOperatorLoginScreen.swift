@@ -141,10 +141,9 @@ struct BusOperatorLoginScreen: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
-            .navigationBarBackButtonHidden(true) // Hides the back button
-            .navigationBarHidden(true) // Completely hides the navigation bar
-        }
-        .navigationViewStyle(StackNavigationViewStyle()) // Ensures consistent navigation
+            .navigationBarBackButtonHidden(true)
+            .navigationBarHidden(true)         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private func handleSignIn(email: String, password: String) {

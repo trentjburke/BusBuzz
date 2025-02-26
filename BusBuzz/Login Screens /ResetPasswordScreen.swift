@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ResetPasswordScreen: View {
-    @State private var newPassword: String = "" // New password input
-    @State private var confirmPassword: String = "" // Confirm password input
+    @State private var newPassword: String = ""
+    @State private var confirmPassword: String = "" 
 
     var body: some View {
         ZStack {

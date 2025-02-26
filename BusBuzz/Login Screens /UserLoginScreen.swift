@@ -178,7 +178,7 @@ struct UserLoginScreen: View {
                             // Google Icon
                             Image("GoogleIcon")
                                 .resizable()
-                                .frame(width: 44, height: 24) // Adjusted size for better proportions
+                                .frame(width: 44, height: 24)
 
                             // Spacing between the icon and the text
                             Text("Sign In with Google")

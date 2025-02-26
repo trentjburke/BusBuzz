@@ -2,13 +2,12 @@ import SwiftUI
 
 struct UserRouteSelectionScreen: View {
     @StateObject private var viewModel = UserRouteSelectionViewModel()
-    @Binding var selectedRoute: BusRoute?  // ✅ Changed to @Binding to allow updates
+    @Binding var selectedRoute: BusRoute?
 
     var body: some View {
         ZStack {
-            // Ensure the blue background covers the entire screen
             AppColors.background
-                .edgesIgnoringSafeArea(.top) // Ensures the blue background extends to the top
+                .edgesIgnoringSafeArea(.top)
 
             VStack(spacing: 8) {
                 // Top Search Bar for Filtering Routes
@@ -58,9 +57,9 @@ struct UserRouteSelectionScreen: View {
                     AppColors.grayBackground
                         .frame(height: 83)
                         .frame(maxWidth: .infinity)
-                        .edgesIgnoringSafeArea(.bottom) // Ensures it stretches across the bottom
+                        .edgesIgnoringSafeArea(.bottom)
             }
-            .edgesIgnoringSafeArea(.bottom) // Ensures the tab view is fully covered
+            .edgesIgnoringSafeArea(.bottom)
         }
         .navigationTitle("Find a Bus")
         .sheet(item: $selectedRoute) { route in

@@ -1,11 +1,12 @@
 import SwiftUI
 import GoogleMaps
 import CoreLocation
+import FirebaseAuth
 
 struct BusOperatorMainMapScreen: View {
     @StateObject private var viewModel = BusOperatorMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
-    var selectedRoute: String?  // Route passed from the previous screen
+    var selectedRoute: String?
     
     var body: some View {
         ZStack {
@@ -16,7 +17,7 @@ struct BusOperatorMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
-                    viewModel.startTrackingBus(for: selectedRoute) // Start tracking bus for the selected route
+                    viewModel.startTrackingBus(for: selectedRoute)
                 }
             )
             .edgesIgnoringSafeArea(.all)
@@ -37,10 +38,9 @@ struct BusOperatorMainMapScreen: View {
         }
         .onAppear {
             if let route = selectedRoute {
-                // Handle route-specific logic (for example, showing the polyline or markers for this route)
-                viewModel.loadRouteOnMap(route: route) // Update the map view based on the selected route
-            }
-            viewModel.startTrackingBus(for: selectedRoute) // Start tracking the bus for the selected route
+                
+                viewModel.loadRouteOnMap(route: route)             }
+            viewModel.startTrackingBus(for: selectedRoute)
             viewModel.enableMyLocation()
         }
     }

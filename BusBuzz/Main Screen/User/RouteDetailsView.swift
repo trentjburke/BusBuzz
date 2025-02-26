@@ -3,10 +3,10 @@ import SwiftUI
 struct RouteDetailsView: View {
     var route: BusRoute
     @State private var isReversed: Bool = false
-    @State private var currentBusStopIndex: Int = 3  // Example: Bus is at index 3 (Dynamic Later)
-    @State private var userLocationIndex: Int = 5    // Example: User is at index 5 (Dynamic Later)
+    @State private var currentBusStopIndex: Int = 3
+    @State private var userLocationIndex: Int = 5
     @State private var navigateToMap = false
-    @Environment(\.presentationMode) var presentationMode // For Closing Modal
+    @Environment(\.presentationMode) var presentationMode
 
     // Define two sets of buses for the routes (Makumbura to Galle and Galle to Makumbura)
     @State private var buses: [Bus] = [
@@ -82,7 +82,7 @@ struct RouteDetailsView: View {
                             ForEach(isReversed ? reversedBuses : buses) { bus in
                                 BusRouteCard(bus: bus)
                                     .padding(.horizontal)
-                                    .padding(.bottom, 4) // Reduced the gap between cards
+                                    .padding(.bottom, 4)
                             }
                         }
                     }
@@ -92,7 +92,7 @@ struct RouteDetailsView: View {
                 ScrollView {
                     HStack(alignment: .top, spacing: 12) {
                         // Dotted line and one dot per stop
-                        VStack(spacing: 6) {  // Adjusted spacing to ensure the line starts and ends at the right position
+                        VStack(spacing: 6) {
                             ForEach(route.stops.indices, id: \.self) { index in
                                 if index == 0 || index == route.stops.count - 1 {
                                     // Start and End dots (green)
@@ -108,7 +108,7 @@ struct RouteDetailsView: View {
                                 if index != route.stops.count - 1 {
                                     Rectangle()
                                         .fill(Color.gray)
-                                        .frame(width: 2, height: 15) // Shortened the line height to make the line shorter
+                                        .frame(width: 2, height: 15)
                                 }
                             }
                         }
@@ -116,7 +116,7 @@ struct RouteDetailsView: View {
                             let stops = isReversed ? route.stops.reversed() : route.stops
                             ForEach(stops.indices, id: \.self) { index in
                                 HStack {
-                                    Text(stops[index].name) // Assuming `name` is used to show the bus stop name
+                                    Text(stops[index].name)
                                         .font(.system(size: 16))
                                         .foregroundColor(.white)
                                         .padding(.leading, 8)
@@ -174,7 +174,7 @@ struct RouteDetailsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Licence plate: \(bus.licensePlate)")
                             .font(.caption)
-                            .foregroundColor(AppColors.background) // Blue text
+                            .foregroundColor(AppColors.background)
 
                         Text("Bus Type: \(bus.busType)")
                             .font(.caption)
@@ -206,17 +206,16 @@ struct RouteDetailsView: View {
                                     .frame(width: 12, height: 13)
                             }
                             .padding(8)
-                            .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // No rounded edges
+                            .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground))
                         }
                         Spacer()
                     }
                 }
                 .padding(8)
-                .frame(maxWidth: .infinity) // Makes the card smaller
-                .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground)) // Card background color (No rounded edges)
+                .frame(maxWidth: .infinity) 
+                .background(RoundedRectangle(cornerRadius: 0).fill(AppColors.grayBackground))
             }
-            .padding(.vertical, 1)  // Reduced gap between the cards
-        }
+            .padding(.vertical, 1)          }
 
         func statusColor(for status: String) -> Color {
             switch status {

@@ -2,11 +2,12 @@ import SwiftUI
 import GoogleMaps
 import CoreLocation
 import Firebase
+import FirebaseAuth
 
 class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var busLocation: CLLocationCoordinate2D?
     @Published var polylinePath: GMSPath?
-    @Published var currentBusStop: String? // Current bus stop name
+    @Published var currentBusStop: String?
     
     private var locationManager = CLLocationManager()
     private var googleMapView: GMSMapView?
@@ -48,7 +49,7 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     func startTrackingBus(for selectedRoute: String?) {
         locationManager.startUpdatingLocation()
         
-        // Set the route's polyline
+        // Set the route's polyline if selected
         if let selectedRoute = selectedRoute {
             loadRouteOnMap(route: selectedRoute)
         }
@@ -60,8 +61,8 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     // Start the timer to update the location every 15 seconds
     private func startLocationUpdateTimer() {
         locationUpdateTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
-            self?.saveBusLocationToFirebase()  // Save location to Firebase
-            self?.updateCurrentBusStop() // Update current bus stop
+            self?.saveBusLocationToFirebase()
+            self?.updateCurrentBusStop()
         }
     }
 
@@ -69,10 +70,14 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     private func saveBusLocationToFirebase() {
         guard let busLocation = busLocation else { return }
         
-        // Firebase reference
-        let dbRef = Database.database().reference().child("busLocations").childByAutoId()
+        // Firebase reference for the bus operator's location
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("User is not authenticated.")
+            return
+        }
         
-        // Saving bus location to Firebase
+        let dbRef = Database.database().reference().child("busOperators").child(uid).child("location")
+        
         let locationData: [String: Any] = [
             "latitude": busLocation.latitude,
             "longitude": busLocation.longitude,
@@ -118,35 +123,28 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
         }
     }
 
-    // Center the map on the bus location
-//    func centerMapOnBus() {
-//        guard let location = busLocation, let mapView = googleMapView else { return }
-//        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 15.0)
-//        mapView.animate(to: camera)
-//    }
-
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
-        self.googleMapView?.isMyLocationEnabled = true  // Enable blue dot
-            self.googleMapView?.settings.myLocationButton = true // Show location button
+        self.googleMapView?.isMyLocationEnabled = true
+        self.googleMapView?.settings.myLocationButton = true
         self.googleMapView?.settings.zoomGestures = true
-            self.googleMapView?.settings.scrollGestures = true
-            self.googleMapView?.settings.rotateGestures = true
-            self.googleMapView?.settings.tiltGestures = true
+        self.googleMapView?.settings.scrollGestures = true
+        self.googleMapView?.settings.rotateGestures = true
+        self.googleMapView?.settings.tiltGestures = true
     }
 
     // Real-time updates when the bus moves
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latestLocation = locations.last else { return }
         DispatchQueue.main.async {
-                self.busLocation = latestLocation.coordinate
-                self.googleMapView?.isMyLocationEnabled = true  // Ensure the blue dot is visible
-                
-                let camera = GMSCameraPosition.camera(withLatitude: latestLocation.coordinate.latitude,
-                                                      longitude: latestLocation.coordinate.longitude,
-                                                      zoom: 15.0)
-                self.googleMapView?.animate(to: camera)
-            }
+            self.busLocation = latestLocation.coordinate
+            self.googleMapView?.isMyLocationEnabled = true
+            
+            let camera = GMSCameraPosition.camera(withLatitude: latestLocation.coordinate.latitude,
+                                                  longitude: latestLocation.coordinate.longitude,
+                                                  zoom: 15.0)
+            self.googleMapView?.animate(to: camera)
+        }
     }
 
     // Helper function to encode coordinates into a polyline string (Google Maps format)
@@ -188,6 +186,7 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
 
         return encoded
     }
+    
     func enableMyLocation() {
         DispatchQueue.main.async {
             self.googleMapView?.isMyLocationEnabled = true

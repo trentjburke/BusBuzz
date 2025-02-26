@@ -38,7 +38,7 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
             destination = CLLocationCoordinate2D(latitude: 6.8512, longitude: 79.8650) // Dehiwala
         case "120":
             origin = CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415)  // Kesbewa
-            destination = CLLocationCoordinate2D(latitude: 6.9345, longitude: 79.8546) // Pettah
+            destination = CLLocationCoordinate2D(latitude: 6.9345, longitude: 79.8546) // Colombo
         case "Ex01":
             origin = CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763) // Makumbura
             destination = CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149) // Galle
@@ -99,8 +99,8 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
     // Sets the Google Map view when it's ready
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
-        self.googleMapView?.isMyLocationEnabled = true  // Enable blue dot
-            self.googleMapView?.settings.myLocationButton = true // Show location button
+        self.googleMapView?.isMyLocationEnabled = true
+            self.googleMapView?.settings.myLocationButton = true
         
         self.googleMapView?.settings.zoomGestures = true
             self.googleMapView?.settings.scrollGestures = true
@@ -113,7 +113,7 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         guard let latestLocation = locations.last else { return }
         DispatchQueue.main.async {
                 self.userLocation = latestLocation.coordinate
-                self.googleMapView?.isMyLocationEnabled = true  // Ensure blue dot is enabled
+                self.googleMapView?.isMyLocationEnabled = true
                 
                 let camera = GMSCameraPosition.camera(
                     withLatitude: latestLocation.coordinate.latitude,
@@ -140,7 +140,7 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
                     if let childSnapshot = child as? DataSnapshot,
                        let data = childSnapshot.value as? [String: Any],
                        let isOnline = data["isOnline"] as? Bool,
-                       isOnline, // Only consider online operators
+                       isOnline,
                        let latitude = data["latitude"] as? Double,
                        let longitude = data["longitude"] as? Double {
 
@@ -157,11 +157,11 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         }
     private func updateMapWithBusOperators() {
             guard let mapView = googleMapView else { return }
-            mapView.clear() // Remove old markers
+            mapView.clear()
 
             for (busID, location) in onlineBusOperators {
                 let marker = GMSMarker(position: location)
-                marker.icon = UIImage(named: "busIcon") // Use a bus icon
+                marker.icon = UIImage(named: "busIcon")
                 marker.title = "Bus \(busID)"
                 marker.map = mapView
             }

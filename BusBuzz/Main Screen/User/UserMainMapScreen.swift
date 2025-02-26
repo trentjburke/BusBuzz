@@ -16,7 +16,7 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
-                    viewModel.fetchSelectedRoute(for: selectedRoute) // Fetch selected route for map display
+                    viewModel.fetchSelectedRoute(for: selectedRoute)
                 }
             )
             .edgesIgnoringSafeArea(.top)

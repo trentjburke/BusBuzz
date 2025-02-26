@@ -1,18 +1,87 @@
 import SwiftUI
-import FirebaseDatabase
 import Firebase
-import FirebaseAuth
 import CoreLocation
+import FirebaseAuth
+
+class BusOperatorSettingsViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    @Published var busLocation: CLLocationCoordinate2D?
+    @Published var isOnline: Bool = false
+    private var locationManager = CLLocationManager()
+
+    override init() {
+        super.init()
+        setupLocationManager()
+    }
+
+    private func setupLocationManager() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+
+    // Update the bus location to Firebase when toggled online
+    func updateLocationToFirebase() {
+        guard let busLocation = busLocation else { return }
+
+        // Assuming the user is logged in and you have their userID from Firebase Authentication
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(uid)/location.json"
+        
+        guard let url = URL(string: databaseURL) else { return }
+
+        let locationData: [String: Any] = [
+            "latitude": busLocation.latitude,
+            "longitude": busLocation.longitude,
+            "timestamp": Int(Date().timeIntervalSince1970)
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: locationData)
+
+        // Saving location to Firebase
+        URLSession.shared.dataTask(with: request) { _, _, error in
+            if let error = error {
+                print("Failed to save bus location: \(error.localizedDescription)")
+            } else {
+                print("Bus location saved successfully!")
+            }
+        }.resume()
+    }
+
+    // Real-time location updates
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let latestLocation = locations.last else { return }
+        
+        DispatchQueue.main.async {
+            self.busLocation = latestLocation.coordinate
+            if self.isOnline {
+                self.updateLocationToFirebase()
+            }
+        }
+    }
+
+    // Enable or disable online status and start/stop location updates
+    func toggleOnlineStatus(isOnline: Bool) {
+        self.isOnline = isOnline
+        if isOnline {
+            locationManager.startUpdatingLocation()
+        } else {
+            locationManager.stopUpdatingLocation()
+        }
+    }
+}
 
 struct BusOperatorSettingsScreen: View {
-    @State private var isOnline: Bool = true // State for the Online/Offline switch
-    @State private var showLoginScreen = false // For showing login screen when logout is tapped
-    @StateObject private var locationManager = LocationManager()
+    @State private var isOnline: Bool = false
+    @State private var showLoginScreen = false
+    @StateObject private var viewModel = BusOperatorSettingsViewModel()
 
     var body: some View {
         NavigationView {
             ZStack {
-                // Background color
                 AppColors.background
                     .edgesIgnoringSafeArea(.all)
 
@@ -31,28 +100,24 @@ struct BusOperatorSettingsScreen: View {
                     .padding(.horizontal)
                     .padding(.top, -30)
 
-                    // List of Settings
+                    // Online/Offline Toggle Row
                     VStack(spacing: 10) {
-                        // Online/Offline Toggle Row
                         HStack {
                             Image("Offline & Online Settings Icon")
                                 .resizable()
                                 .frame(width: 35, height: 35)
                                 .padding(.trailing, 10)
-
                             Text("Online/Offline")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(AppColors.background)
-
                             Spacer()
-
                             Toggle("", isOn: $isOnline)
                                 .labelsHidden()
                                 .onChange(of: isOnline) { value in
-                                    if !value {
-                                        stopSharingLocation()
+                                    if value {
+                                        viewModel.toggleOnlineStatus(isOnline: true)
                                     } else {
-                                        startSharingLocation()
+                                        viewModel.toggleOnlineStatus(isOnline: false) 
                                     }
                                 }
                         }
@@ -63,13 +128,9 @@ struct BusOperatorSettingsScreen: View {
 
                         // Settings Rows
                         SettingsRow(iconName: "Application info", title: "Application Info", textColor: AppColors.background, destination: AnyView(ApplicationInfoView()))
-
                         SettingsRow(iconName: "User Manual", title: "User Manual", textColor: AppColors.background, destination: AnyView(UserManualPDFView()))
-
                         SettingsRow(iconName: "Contact us", title: "Contact Us", textColor: AppColors.background, destination: AnyView(ContactUsView()))
-
                         SettingsRow(iconName: "Privacy policy icon", title: "Privacy Policy", textColor: AppColors.background, destination: AnyView(PrivacyPolicyPDFView()))
-
                         SettingsRow(iconName: "Logout Icon", title: "Logout", textColor: AppColors.background) {
                             handleLogout()
                         }
@@ -95,57 +156,10 @@ struct BusOperatorSettingsScreen: View {
         }
     }
 
-    // Function to stop location sharing
-    private func stopSharingLocation() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        let dbRef = Database.database().reference().child("busOperators").child(uid)
-        dbRef.updateChildValues(["isOnline": false]) { error, _ in
-            if let error = error {
-                print("Failed to go offline: \(error.localizedDescription)")
-            } else {
-                print("Bus operator is now offline.")
-            }
-        }
-    }
-
-    // Function to start location sharing (Go Online)
-    private func startSharingLocation() {
-        if Auth.auth().currentUser == nil {
-            print("❌ User is NOT authenticated. Cannot write to Firebase.")
-        } else {
-            print("✅ User is authenticated: \(Auth.auth().currentUser?.uid ?? "Unknown UID")")
-        }
-        guard let uid = Auth.auth().currentUser?.uid else {
-                print("❌ No authenticated user found. User must log in.")
-                return
-            }
-
-        let dbRef = Database.database().reference().child("busOperators").child(uid)
-
-        if let location = locationManager.userLocation {
-            let locationData: [String: Any] = [
-                "isOnline": true,
-                "latitude": location.latitude,
-                "longitude": location.longitude
-            ]
-            
-            dbRef.updateChildValues(locationData) { error, _ in
-                if let error = error {
-                    print("❌ Failed to go online: \(error.localizedDescription)")
-                } else {
-                    print("✅ Bus operator is now online.")
-                }
-            }
-        } else {
-            print("❌ Location not available.")
-        }
-    }
     // Function to handle logout
     private func handleLogout() {
         guard let uid = UserDefaults.standard.string(forKey: "user_uid") else { return }
-        
-        // Set the bus operator as offline in Firebase
+
         let dbRef = Database.database().reference().child("busOperators").child(uid)
         dbRef.updateChildValues(["isOnline": false]) { error, _ in
             if let error = error {
@@ -155,11 +169,9 @@ struct BusOperatorSettingsScreen: View {
             }
         }
 
-        // Clear stored UID so the session doesn't persist
         UserDefaults.standard.removeObject(forKey: "user_uid")
         print("✅ UID removed. User is logged out.")
 
-        // Navigate back to the login screen
         showLoginScreen = true
     }
 }

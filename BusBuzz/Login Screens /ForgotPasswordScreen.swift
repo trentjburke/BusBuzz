@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ForgotPasswordScreen: View {
-    @State private var email: String = "" // State for email input
-    @State private var showAlert: Bool = false // State for showing the alert
-    @State private var alertTitle: String = "" // Title for the alert
-    @State private var alertMessage: String = "" // Alert message content
-    @State private var emailError: Bool = false // State for displaying the red border
+    @State private var email: String = ""
+    @State private var showAlert: Bool = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
+    @State private var emailError: Bool = false
 
     var body: some View {
         ZStack {
@@ -34,7 +34,6 @@ struct ForgotPasswordScreen: View {
 
                 // Email TextField
                 TextField("Enter email address", text: $email, onEditingChanged: { _ in
-                    // Remove red border when user starts typing
                     emailError = false
                 })
                     .autocapitalization(.none)
@@ -89,7 +88,7 @@ struct ForgotPasswordScreen: View {
     }
 
     private func handleForgotPassword(email: String) {
-        emailError = email.isEmpty // Set red border if empty
+        emailError = email.isEmpty
 
         guard !email.isEmpty else {
             alertTitle = "⚠️ Error"

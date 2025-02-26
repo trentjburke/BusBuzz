@@ -1,9 +1,3 @@
-//
-//  LocationManager.swift
-//  BusBuzz
-//
-//  Created by Trent Burke on 2025-02-23.
-//
 import Foundation
 import CoreLocation
 

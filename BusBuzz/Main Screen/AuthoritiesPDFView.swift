@@ -4,7 +4,6 @@ import PDFKit
 struct AuthoritiesPDFView: View {
     var body: some View {
         VStack {
-            // 🔹 Display PDF Viewer
             if let pdfURL = Bundle.main.url(forResource: "BussBuzz Emergency Services Contact List", withExtension: "pdf") {
                 PDFKitView(url: pdfURL)
                     .background(Color.white) 

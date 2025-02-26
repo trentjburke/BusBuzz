@@ -6,7 +6,6 @@ struct PrivacyPolicyPDFView: View {
         VStack {
             Divider()
 
-            // 🔹 PDF Viewer
             if let pdfURL = Bundle.main.url(forResource: "BussBuzz User Application Privacy Policy", withExtension: "pdf") {
                 PDFKitView(url: pdfURL)
                     .edgesIgnoringSafeArea(.all)

@@ -13,34 +13,44 @@ struct BusOperatorMainScreenContentView: View {
                 TabView(selection: $selectedTab) {
                     BusOperatorTimetableScreen()
                         .tabItem {
-                            Image(systemName: "list.bullet")
+                            VStack {
+                                Image(systemName: "list.bullet")
+                                    .imageScale(.large)
+                                Text("Schedule") 
+                            }
                         }
                         .tag(0)
 
                     BusOperatorMainMapScreen()
                         .tabItem {
-                            Image(systemName: "map")
+                            VStack {
+                                Image(systemName: "location.circle")
+                                    .imageScale(.large)
+                                Text("Location")
+                            }
                         }
                         .tag(1)
 
                     BusOperatorSettingsScreen()
                         .tabItem {
-                            Image(systemName: "gear")
+                            VStack {
+                                Image(systemName: "gear")
+                                    .imageScale(.large)
+                                Text("Settings")
+                            }
                         }
                         .tag(2)
                 }
                 .accentColor(AppColors.buttonGreen)
                 .ignoresSafeArea(edges: .bottom)
-
-                // Add spacing at the bottom of the map (before the tab view)
                 .frame(maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.bottom) // Remove map content from bottom if necessary
-            }
-            .edgesIgnoringSafeArea(.top) // Make sure the top part isn't affected
 
+                .edgesIgnoringSafeArea(.bottom)
+            }
+            .edgesIgnoringSafeArea(.top)
         }
         .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)  // Hide navigation bar
+        .navigationBarHidden(true)
     }
 }
 

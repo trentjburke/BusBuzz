@@ -1,68 +1,67 @@
 import SwiftUI
 
 struct UserMainScreenContentView: View {
-    @State private var selectedTab = 0
-    @State private var selectedRoute: BusRoute? = nil  // ✅ Added selectedRoute to handle navigation
+   @State private var selectedTab = 0
+   @State private var selectedRoute: BusRoute? = nil
 
-    var body: some View {
-        ZStack {
-            // Apply blue background to the entire screen including tab area
-            AppColors.background
+   var body: some View {
+       ZStack {
+        
+           AppColors.background
 
-            VStack(spacing: 0) {
-                Spacer()
+           VStack(spacing: 0) {
+               Spacer()
 
-                // TabView with custom background and icon styles
-                TabView(selection: $selectedTab) {
-                    // Menu Tab
-                    UserRouteSelectionScreen(selectedRoute: $selectedRoute)  // ✅ Pass selectedRoute to update when a user selects a route
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "list.bullet")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 25, height: 25)
-                                Text("Menu")
-                            }
-                        }
-                        .tag(0)
+               TabView(selection: $selectedTab) {
+                   // Menu Tab
+                   UserRouteSelectionScreen(selectedRoute: $selectedRoute)
+                       .tabItem {
+                           VStack {
+                               Image(systemName: "list.bullet")
+                                   .resizable()
+                                   .scaledToFit()
+                                   .frame(width: 25, height: 25)
+                               Text("Route")
+                           }
+                       }
+                       .tag(0)
 
-                    // Map Tab
-                    UserMainMapScreen(selectedRoute: selectedRoute ?? BusRoute.defaultRoute)  // ✅ Ensuring a valid route
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "map")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 25, height: 25)
-                                Text("Map")
-                            }
-                        }
-                        .tag(1)
+                   // Map Tab
+                   UserMainMapScreen(selectedRoute: selectedRoute ?? BusRoute.defaultRoute)
+                       .tabItem {
+                           VStack {
+                               Image(systemName: "location.circle")
+                                   .resizable()
+                                   .scaledToFit()
+                                   .frame(width: 25, height: 25)
+                               Text("Location")
+                           }
+                       }
+                       .tag(1)
 
-                    // Settings Tab
-                    UserSettingsScreen()
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "gear")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 25, height: 25)
-                                Text("Settings")
-                            }
-                        }
-                        .tag(2)
-                }
-                .accentColor(AppColors.buttonGreen)
-            }
-            .edgesIgnoringSafeArea(.top)
-        }
-        .navigationBarBackButtonHidden(true)
-    }
+                   // Settings Tab
+                   UserSettingsScreen()
+                       .tabItem {
+                           VStack {
+                               Image(systemName: "gear")
+                                   .resizable()
+                                   .scaledToFit()
+                                   .frame(width: 25, height: 25)
+                               Text("Settings")
+                           }
+                       }
+                       .tag(2)
+               }
+               .accentColor(AppColors.buttonGreen)
+           }
+           .edgesIgnoringSafeArea(.top)
+       }
+       .navigationBarBackButtonHidden(true)
+   }
 }
 
 struct UserMainScreenContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserMainScreenContentView()
-    }
+   static var previews: some View {
+       UserMainScreenContentView()
+   }
 }

@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct SettingsRow: View {
-    var iconName: String  // Custom Icon Name
+    var iconName: String  
     var title: String
-    var textColor: Color = AppColors.background // ✅ Default to App Background Color
+    var textColor: Color = AppColors.background
     var destination: AnyView? = nil
     var action: (() -> Void)? = nil
 

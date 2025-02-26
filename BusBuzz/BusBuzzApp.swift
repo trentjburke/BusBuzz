@@ -2,7 +2,7 @@
 import SwiftUI
 import Firebase
 import GoogleSignIn
-import GoogleMaps // Import Google Maps SDK
+import GoogleMaps
 
 @main
 struct BusBuzzApp: App {
@@ -10,7 +10,7 @@ struct BusBuzzApp: App {
 
     var body: some Scene {
         WindowGroup {
-            LaunchScreen() // Your Launch Screen
+            LaunchScreen()
         }
     }
 }
@@ -28,10 +28,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             fatalError("Unable to retrieve CLIENT_ID from Firebase configuration.")
         }
         
-        // Set the Google Maps API key directly (no need for conditional binding)
-        let apiKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4" // Your Google Maps API Key here
-        GMSServices.provideAPIKey(apiKey) // Initialize Google Maps with the API key
-        
+        // Set the Google Maps API key directly
+        let apiKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
+        GMSServices.provideAPIKey(apiKey)
         return true
     }
     

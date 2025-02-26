@@ -40,7 +40,7 @@ struct GoogleMapView: UIViewRepresentable {
             guard let path = polylinePath else { return }
 
             if routePolyline != nil {
-                routePolyline?.map = nil  // Remove previous polyline
+                routePolyline?.map = nil  
             }
 
             routePolyline = GMSPolyline(path: path)

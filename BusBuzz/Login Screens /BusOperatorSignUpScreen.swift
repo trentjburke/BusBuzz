@@ -37,7 +37,7 @@ struct BusOperatorSignUpScreen: View {
                 Image("BusBuzz_Logo_Without_Slogan")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 400, height: 300) // Keeps original dimensions
+                    .frame(width: 400, height: 300)
                     .padding(.top, -12)
                 
                 // Title
@@ -48,7 +48,7 @@ struct BusOperatorSignUpScreen: View {
                     .padding(.horizontal, 20)
                 
                 // Input Fields
-                VStack(spacing: 8) { // Reduced spacing between fields
+                VStack(spacing: 8) {
                     // User ID Field
                     InputField(
                         title: "Enter Email address",
@@ -110,7 +110,7 @@ struct BusOperatorSignUpScreen: View {
                         .cornerRadius(15)
                         .padding(.horizontal, 40)
                 }
-                .padding(.top, 10) // Moves button closer to input fields
+                .padding(.top, 10)
                 
                 // Navigation to Login Screen
                 NavigationLink(destination: BusOperatorLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToLogin) {
@@ -130,11 +130,11 @@ struct BusOperatorSignUpScreen: View {
                             .bold()
                     }
                 }
-                .padding(.top, 5) // Reduced padding to bring it closer to the button
+                .padding(.top, 5)
                 
                 Spacer()
             }
-            .padding(.top, -55) // Moves entire VStack upwards to fit everything on the screen
+            .padding(.top, -55)
         }
         .alert(isPresented: $showAlert) {
             Alert(
@@ -297,8 +297,8 @@ struct BusOperatorSignUpScreen: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(error ? Color.red : Color.clear, lineWidth: 2)
-                ) // Apply overlay directly to the frame
-                .padding(.horizontal, 20) // Padding applied after the overlay
+                ) 
+                .padding(.horizontal, 20)
             }
         }
     }

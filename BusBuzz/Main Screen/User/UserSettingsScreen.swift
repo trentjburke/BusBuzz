@@ -10,12 +10,10 @@ struct UserSettingsScreen: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background color
                 AppColors.background
                     .edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
-                    // Header
                     HStack {
                         Text("Settings")
                             .font(.system(size: 40, weight: .bold))
@@ -28,8 +26,7 @@ struct UserSettingsScreen: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, -30)
-
-                    // Settings List
+                    
                     VStack(spacing: 10) {
                         // Settings Rows
                         SettingsRow(iconName: "Application info", title: "Application Info", textColor: AppColors.background, destination: AnyView(ApplicationInfoView()))
@@ -50,15 +47,13 @@ struct UserSettingsScreen: View {
                     Spacer()
                 }
                 .padding(.top, 20)
-
-                // Gray background for the bottom tab view
                 VStack {
                     Spacer()
                     AppColors.grayBackground
-                        .frame(height: 83) // Adjusted height for the bottom tab area
-                        .edgesIgnoringSafeArea(.horizontal) // Ensure it stretches across the bottom
+                        .frame(height: 83)
+                        .edgesIgnoringSafeArea(.horizontal)
                 }
-                .edgesIgnoringSafeArea(.bottom) // Keep the bottom area covered and prevent gaps
+                .edgesIgnoringSafeArea(.bottom)
             }
             
             // Full Screen Login
