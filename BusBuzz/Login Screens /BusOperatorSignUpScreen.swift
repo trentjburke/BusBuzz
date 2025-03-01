@@ -210,6 +210,7 @@ struct BusOperatorSignUpScreen: View {
         
         guard let url = URL(string: databaseURL) else { return }
         
+        // Include the selectedRoute here in the Firebase data
         let busOperatorData: [String: Any] = [
             "email": userID,
             "licensePlateNumber": licensePlateNumber,

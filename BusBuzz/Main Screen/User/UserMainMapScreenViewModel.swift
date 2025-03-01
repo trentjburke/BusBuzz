@@ -13,7 +13,22 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
     private var googleMapView: GMSMapView?
 
     private let googleMapsAPIKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
-
+    
+    // Hardcoded polyline data for the routes
+    private let routePolylines: [String: [CLLocationCoordinate2D]] = [
+        "119": [
+            CLLocationCoordinate2D(latitude: 6.846004, longitude: 79.926111), // Maharagama
+            CLLocationCoordinate2D(latitude: 6.851253, longitude: 79.865038)  // Dehiwala
+        ],
+        "120": [
+            CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415),  // Kesbewa
+            CLLocationCoordinate2D(latitude: 6.9488, longitude: 79.9930)  // Colombo
+        ],
+        "Ex01": [
+            CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763),  // Makumbura
+            CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149)  // Galle
+        ]
+    ]
     override init() {
         super.init()
         setupLocationManager()
@@ -26,68 +41,33 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         locationManager.startUpdatingLocation()
     }
 
-    // Fetches the route polyline based on the selected route
-    func fetchSelectedRoute(for route: BusRoute) {
-        var origin: CLLocationCoordinate2D
-        var destination: CLLocationCoordinate2D
+    // Load polyline based on the selected route
+     func loadPolyline(for route: BusRoute) {
+         let coordinates = route.stops.map { $0.location }  // Extract coordinates from route
+         polylinePath = GMSPath(fromEncodedPath: encodePath(coordinates: coordinates))  // Encode to polyline
+     }
 
-        // Check which route is selected and set origin and destination accordingly
-        switch route.routeNumber {
-        case "119":
-            origin = CLLocationCoordinate2D(latitude: 6.8461, longitude: 79.9261)  // Maharagama
-            destination = CLLocationCoordinate2D(latitude: 6.8512, longitude: 79.8650) // Dehiwala
-        case "120":
-            origin = CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415)  // Kesbewa
-            destination = CLLocationCoordinate2D(latitude: 6.9345, longitude: 79.8546) // Colombo
-        case "Ex01":
-            origin = CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763) // Makumbura
-            destination = CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149) // Galle
-        default:
-            return
-        }
-
-        fetchRoute(from: origin, to: destination)
-    }
-
-    // Fetches the polyline for the selected route using Google's Directions API
-    private func fetchRoute(from origin: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D) {
-        let directionsURL = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin.latitude),\(origin.longitude)&destination=\(destination.latitude),\(destination.longitude)&key=\(googleMapsAPIKey)"
+     // Helper function to encode coordinates into a polyline string
+    private func encodePath(coordinates: [CLLocationCoordinate2D]) -> String {
+        var encodedString = ""
+        var prevLat: Int = 0
+        var prevLng: Int = 0
         
-        guard let url = URL(string: directionsURL) else { return }
-
-        let task = URLSession.shared.dataTask(with: url) { (data: Data?, response: URLResponse?, error: Error?) in
-            if let error = error {
-                print("Error fetching route: \(error.localizedDescription)")
-                return
-            }
-
-            guard let data = data else { return }
-
-            do {
-                let decoder = JSONDecoder()
-                let directionsResponse = try decoder.decode(DirectionsResponse.self, from: data)
-                if let routes = directionsResponse.routes, let route = routes.first {
-                    DispatchQueue.main.async {
-                        self.decodePolyline(encodedPolyline: route.overview_polyline.points)
-                    }
-                }
-            } catch {
-                print("Failed to decode directions response: \(error)")
-            }
+        for coordinate in coordinates {
+            let lat = Int(coordinate.latitude * 1e5)
+            let lng = Int(coordinate.longitude * 1e5)
+            var deltaLat = lat - prevLat
+            var deltaLng = lng - prevLng
+            
+            encodedString += encodeCoordinate(deltaLat)
+            encodedString += encodeCoordinate(deltaLng)
+            
+            prevLat = lat
+            prevLng = lng
         }
-        task.resume()
+        return encodedString
     }
 
-    // Decodes the polyline returned by the API and updates the map
-    func decodePolyline(encodedPolyline: String) {
-        if let path = GMSPath(fromEncodedPath: encodedPolyline) {
-            DispatchQueue.main.async {
-                self.polylinePath = path
-            }
-        } else {
-            print("Failed to decode polyline")
-        }
-    }
 
     // Centers the map on the user's location
     func centerMapOnUser() {
@@ -107,7 +87,26 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
             self.googleMapView?.settings.rotateGestures = true
             self.googleMapView?.settings.tiltGestures = true
     }
+    
+    
+    // Helper function to encode a single coordinate
+     private func encodeCoordinate(_ coordinate: Int) -> String {
+         var coord = coordinate
+         coord <<= 1
+         if coordinate < 0 {
+             coord = ~coord
+         }
 
+         var encoded = ""
+         while coord >= 0x20 {
+             let nextValue = (0x20 | (coord & 0x1f)) + 63
+             encoded.append(Character(UnicodeScalar(nextValue)!))
+             coord >>= 5
+         }
+         encoded.append(Character(UnicodeScalar(coord + 63)!))
+
+         return encoded
+     }
     // Updates the user's location when the location manager detects a change
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latestLocation = locations.last else { return }

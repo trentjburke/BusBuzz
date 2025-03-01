@@ -31,8 +31,18 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
             ("Karagampitiya", CLLocationCoordinate2D(latitude: 6.850165, longitude: 79.872634)),
             ("Hillstreet", CLLocationCoordinate2D(latitude: 6.851187, longitude: 79.866501)),
             ("Dehiwala", CLLocationCoordinate2D(latitude: 6.851253, longitude: 79.865038))
+        ],
+    
+        "120 Colombo - Kesbewa": [
+            ("Kesbewa", CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415)),
+            // Add all other stops here...
+        ],
+        "Ex-01 Colombo Makumbara Bus Station - Galle Central Bus Station": [
+            ("Makumbura", CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763)),
+            // Add all other stops here...
         ]
     ]
+
     
     override init() {
         super.init()
@@ -93,10 +103,10 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
         }
     }
 
-    // Load the route's polyline on the map based on the selected route
     func loadRouteOnMap(route: String) {
         guard let mapView = googleMapView else { return }
         
+        // Check if the route is in the predefined routes dictionary
         if let routeCoordinates = busRoutes[route]?.map({ $0.location }) {
             let path = GMSPath(fromEncodedPath: encodePath(coordinates: routeCoordinates))
             polylinePath = path
@@ -105,9 +115,10 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
             polyline.strokeColor = .green
             polyline.strokeWidth = 3
             polyline.map = mapView
+        } else {
+            print("Route not found")
         }
     }
-
     // Update the current bus stop based on bus's location
     private func updateCurrentBusStop() {
         guard let busLocation = busLocation, let selectedRoute = busRoutes["119 Dehiwala - Maharagama"] else { return }

@@ -1,7 +1,5 @@
 import SwiftUI
 import GoogleMaps
-import CoreLocation
-import FirebaseAuth
 
 struct BusOperatorMainMapScreen: View {
     @StateObject private var viewModel = BusOperatorMainMapScreenViewModel()
@@ -24,7 +22,6 @@ struct BusOperatorMainMapScreen: View {
 
             VStack {
                 Spacer()
-                
             }
 
             // Gray background for the bottom tab view
@@ -38,16 +35,10 @@ struct BusOperatorMainMapScreen: View {
         }
         .onAppear {
             if let route = selectedRoute {
-                
-                viewModel.loadRouteOnMap(route: route)             }
+                viewModel.loadRouteOnMap(route: route)
+            }
             viewModel.startTrackingBus(for: selectedRoute)
             viewModel.enableMyLocation()
         }
-    }
-}
-
-struct BusOperatorMainMapScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        BusOperatorMainMapScreen(selectedRoute: "119 Dehiwala - Maharagama")
     }
 }
