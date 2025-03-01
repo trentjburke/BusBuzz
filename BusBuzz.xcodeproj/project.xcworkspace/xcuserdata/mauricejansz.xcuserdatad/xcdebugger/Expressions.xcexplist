@@ -3,6 +3,17 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "UserMainMapScreenViewModel.observeOnlineBusOperators():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "dbRef.observe(.value)">
+            </PersistentString>
+            <PersistentString
+               value = "dbRef">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "BusOperatorSettingsScreen.startSharingLocation():BusOperatorSettingsScreen.swift">
          <PersistentStrings>
             <PersistentString
@@ -11,10 +22,37 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "BusOperatorSettingsViewModel.toggleOnlineStatus(isOnline:):BusOperatorSettingsScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UserDefaults.standard">
+            </PersistentString>
+            <PersistentString
+               value = "UserDefaults.standard.string(forKey: &quot;userId&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UserMainMapScreenViewModel.restoreFirebaseSession():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UserDefaults.standard.string(forKey: &quot;user_id_token&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #2 in closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
          <PersistentStrings>
             <PersistentString
                value = "UserDefaults.standard.string(forKey: &quot;user_uid&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "navigateToBusOperatorMainScreen">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

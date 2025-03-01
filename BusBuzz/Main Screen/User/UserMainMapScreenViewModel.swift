@@ -3,6 +3,7 @@ import GoogleMaps
 import CoreLocation
 import FirebaseDatabase
 import Firebase
+import FirebaseAuth
 
 class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var userLocation: CLLocationCoordinate2D?
@@ -29,10 +30,19 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
             CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149)  // Galle
         ]
     ]
+    private var onlineBusTimer: Timer?
+
+    private func startOnlineBusTimer() {
+        onlineBusTimer?.invalidate() // Stop existing timer if running
+        onlineBusTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
+            self.observeOnlineBusOperators()
+        }
+    }
+
     override init() {
         super.init()
         setupLocationManager()
-        observeOnlineBusOperators()
+        startOnlineBusTimer()  // ✅ Keep refreshing every 10 seconds
     }
 
     private func setupLocationManager() {
@@ -80,12 +90,11 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
         self.googleMapView?.isMyLocationEnabled = true
-            self.googleMapView?.settings.myLocationButton = true
-        
+        self.googleMapView?.settings.myLocationButton = true
         self.googleMapView?.settings.zoomGestures = true
-            self.googleMapView?.settings.scrollGestures = true
-            self.googleMapView?.settings.rotateGestures = true
-            self.googleMapView?.settings.tiltGestures = true
+        self.googleMapView?.settings.scrollGestures = true
+        self.googleMapView?.settings.rotateGestures = true
+        self.googleMapView?.settings.tiltGestures = true
     }
     
     
@@ -129,42 +138,83 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         }
     }
     
-    private func observeOnlineBusOperators() {
-            let dbRef = Database.database().reference().child("busOperators")
+    func observeOnlineBusOperators() {
+        guard let firebaseURL = URL(string: "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators.json") else {
+            print("❌ Invalid Firebase URL")
+            return
+        }
 
-            dbRef.observe(.value) { snapshot in
-                var updatedOperators: [String: CLLocationCoordinate2D] = [:]
+        var request = URLRequest(url: firebaseURL)
+        request.httpMethod = "GET"
 
-                for child in snapshot.children {
-                    if let childSnapshot = child as? DataSnapshot,
-                       let data = childSnapshot.value as? [String: Any],
-                       let isOnline = data["isOnline"] as? Bool,
-                       isOnline,
-                       let latitude = data["latitude"] as? Double,
-                       let longitude = data["longitude"] as? Double {
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Failed to fetch bus operators: \(error.localizedDescription)")
+                return
+            }
 
-                        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                        updatedOperators[childSnapshot.key] = location
+            guard let data = data else {
+                print("❌ No data received from Firebase")
+                return
+            }
+
+            // ✅ Process data in the background
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        var updatedOperators: [String: CLLocationCoordinate2D] = [:]
+
+                        for (busID, details) in json {
+                            if let busData = details as? [String: Any],
+                               let isOnline = busData["isOnline"] as? Bool,
+                               isOnline,
+                               let latitude = busData["latitude"] as? Double,
+                               let longitude = busData["longitude"] as? Double,
+                               let licensePlateNumber = busData["licensePlateNumber"] as? String {
+
+                                let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                
+                                updatedOperators[licensePlateNumber] = location
+                            }
+                        }
+
+                        // ✅ Update UI on the main thread
+                        DispatchQueue.main.async {
+                            self.onlineBusOperators = updatedOperators
+                            self.updateMapWithBusOperators()
+                        }
                     }
-                }
-
-                DispatchQueue.main.async {
-                    self.onlineBusOperators = updatedOperators
-                    self.updateMapWithBusOperators()
+                } catch {
+                    print("❌ Error decoding Firebase JSON: \(error.localizedDescription)")
                 }
             }
-        }
+        }.resume()
+    }
+    
     private func updateMapWithBusOperators() {
-            guard let mapView = googleMapView else { return }
-            mapView.clear()
+        guard let mapView = googleMapView else { return }
+        mapView.clear()  // ✅ Clear previous markers
 
-            for (busID, location) in onlineBusOperators {
-                let marker = GMSMarker(position: location)
-                marker.icon = UIImage(named: "busIcon")
-                marker.title = "Bus \(busID)"
-                marker.map = mapView
+        for (licensePlateNumber, location) in onlineBusOperators {
+            let marker = GMSMarker(position: location)
+
+            if let busIcon = UIImage(named: "BusIconBlue") {
+                let scaledBusIcon = resizeImage(image: busIcon, targetSize: CGSize(width: 40, height: 40)) // Adjust size as needed
+                marker.icon = scaledBusIcon
             }
+
+            marker.title = "Bus \(licensePlateNumber)"
+            marker.map = mapView
         }
+    }
+
+    // 🔹 Helper function to resize image
+    private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
 }
 
 // DirectionsResponse Struct (to fix the missing struct error)

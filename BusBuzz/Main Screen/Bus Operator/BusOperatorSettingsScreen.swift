@@ -18,59 +18,157 @@ class BusOperatorSettingsViewModel: NSObject, ObservableObject, CLLocationManage
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
+    private var locationUpdateTimer: Timer?
 
     // Update the bus location to Firebase when toggled online
-    func updateLocationToFirebase() {
-        guard let busLocation = busLocation else { return }
+    private func updateLocationToFirebase(for busOperatorId: String) {
+        guard let location = locationManager.location?.coordinate else { return }
 
-        // Assuming the user is logged in and you have their userID from Firebase Authentication
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(busOperatorId).json"
 
-        let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(uid)/location.json"
-        
-        guard let url = URL(string: databaseURL) else { return }
+        guard let url = URL(string: databaseURL) else {
+            print("❌ Invalid Firebase Database URL")
+            return
+        }
 
         let locationData: [String: Any] = [
-            "latitude": busLocation.latitude,
-            "longitude": busLocation.longitude,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
             "timestamp": Int(Date().timeIntervalSince1970)
         ]
 
         var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
+        request.httpMethod = "PATCH"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: locationData)
 
-        // Saving location to Firebase
         URLSession.shared.dataTask(with: request) { _, _, error in
             if let error = error {
-                print("Failed to save bus location: \(error.localizedDescription)")
+                print("❌ Failed to update bus location: \(error.localizedDescription)")
             } else {
-                print("Bus location saved successfully!")
+                print("✅ Updated bus location in Firebase.")
             }
         }.resume()
     }
 
-    // Real-time location updates
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let latestLocation = locations.last else { return }
-        
-        DispatchQueue.main.async {
-            self.busLocation = latestLocation.coordinate
-            if self.isOnline {
-                self.updateLocationToFirebase()
-            }
-        }
-    }
+//    // Real-time location updates
+//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        guard let latestLocation = locations.last else { return }
+//        
+//        DispatchQueue.main.async {
+//            self.busLocation = latestLocation.coordinate
+//            if self.isOnline {
+//                self.updateLocationToFirebase()
+//            }
+//        }
+//    }
 
     // Enable or disable online status and start/stop location updates
     func toggleOnlineStatus(isOnline: Bool) {
         self.isOnline = isOnline
+
+        guard let userId = UserDefaults.standard.string(forKey: "user_uid") else {
+            print("❌ No user_id found in UserDefaults. User must log in.")
+            return
+        }
+
+        let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators.json"
+
+        guard let url = URL(string: databaseURL) else {
+            print("❌ Invalid Firebase Database URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Failed to fetch bus operators: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                print("❌ Failed to parse bus operators response.")
+                return
+            }
+
+            var matchingBusOperatorId: String? = nil
+            for (key, value) in json {
+                if let operatorData = value as? [String: Any],
+                   let storedUserId = operatorData["user_id"] as? String,
+                   storedUserId == userId {
+                    matchingBusOperatorId = key
+                    break
+                }
+            }
+
+            guard let busOperatorId = matchingBusOperatorId else {
+                print("❌ No matching bus operator found for user_id: \(userId)")
+                return
+            }
+
+            print("✅ Found bus operator: \(busOperatorId)")
+
+            // ✅ Start or stop updating location every 10 seconds
+            DispatchQueue.main.async {
+                if isOnline {
+                    self.startLocationUpdateTimer(for: busOperatorId)
+                } else {
+                    self.stopLocationUpdateTimer()
+                }
+            }
+
+            self.updateBusOperatorStatus(busOperatorId: busOperatorId, isOnline: isOnline)
+        }.resume()
+    }
+    private func startLocationUpdateTimer(for busOperatorId: String) {
+        stopLocationUpdateTimer()  // Ensure we don't start multiple timers
+        locationUpdateTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.updateLocationToFirebase(for: busOperatorId)
+        }
+    }
+
+    private func stopLocationUpdateTimer() {
+        locationUpdateTimer?.invalidate()
+        locationUpdateTimer = nil
+    }
+    private func updateBusOperatorStatus(busOperatorId: String, isOnline: Bool) {
+        let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(busOperatorId).json"
+
+        guard let url = URL(string: databaseURL) else {
+            print("❌ Invalid Firebase Database URL")
+            return
+        }
+
+        var updateData: [String: Any] = ["isOnline": isOnline]
+
         if isOnline {
             locationManager.startUpdatingLocation()
+            updateData["timestamp"] = Int(Date().timeIntervalSince1970)
+
+            if let location = locationManager.location?.coordinate {
+                updateData["latitude"] = location.latitude
+                updateData["longitude"] = location.longitude
+            }
         } else {
             locationManager.stopUpdatingLocation()
         }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: updateData)
+
+        URLSession.shared.dataTask(with: request) { _, _, error in
+            if let error = error {
+                print("❌ Failed to update online status in Firebase: \(error.localizedDescription)")
+            } else {
+                print("✅ Successfully updated online status in Firebase: \(isOnline)")
+            }
+        }.resume()
     }
 }
 

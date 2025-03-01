@@ -195,6 +195,11 @@ struct UserLoginScreen: View {
                     }
                     .padding(.horizontal, 40)
                     .padding(.top, 10)
+                    NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
+                        Text("Are you a bus driver?")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(AppColors.buttonGreen)
+                    }
 
                 }
             }
@@ -261,11 +266,14 @@ struct UserLoginScreen: View {
                 return
             }
             
-            if let userId = json["localId"] as? String {
-                        UserDefaults.standard.set(userId, forKey: "user_uid")
+            if let userId = json["localId"] as? String,
+               let idToken = json["idToken"] as? String {
+                UserDefaults.standard.set(userId, forKey: "user_uid")
+                UserDefaults.standard.set(idToken, forKey: "user_id_token")
                 UserDefaults.standard.set("user", forKey: "user_type")
-                        print("✅ UID Saved: \(userId)")
-                    }
+                print("✅ UID Saved: \(userId)")
+                print("✅ ID Token Saved: \(idToken)")
+            }
 
 
             DispatchQueue.main.async {

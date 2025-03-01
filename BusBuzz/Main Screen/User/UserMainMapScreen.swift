@@ -21,6 +21,9 @@ struct UserMainMapScreen: View {
                 }
             )
             .edgesIgnoringSafeArea(.top)
+            .onAppear() {
+                viewModel.observeOnlineBusOperators()
+            }
 
             VStack {
                 Spacer()

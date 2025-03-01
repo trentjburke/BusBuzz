@@ -132,6 +132,11 @@ struct BusOperatorLoginScreen: View {
                         }
                     }
                     .padding(.top, 5)
+                    NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
+                        Text("Are you a passenger?")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(AppColors.buttonGreen)
+                    }
                 }
             }
             .alert(isPresented: $showAlert) {
@@ -198,10 +203,13 @@ struct BusOperatorLoginScreen: View {
             }
 
             // ✅ Save the UID in UserDefaults for session persistence
-            if let userId = json["localId"] as? String {
+            if let userId = json["localId"] as? String,
+               let idToken = json["idToken"] as? String {
                 UserDefaults.standard.set(userId, forKey: "user_uid")
+                UserDefaults.standard.set(idToken, forKey: "user_id_token")
                 UserDefaults.standard.set("bus_operator", forKey: "user_type")
                 print("✅ UID Saved: \(userId)")
+                print("✅ ID Token Saved: \(idToken)")
             }
 
             DispatchQueue.main.async {

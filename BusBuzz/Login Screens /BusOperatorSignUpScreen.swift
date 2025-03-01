@@ -147,41 +147,41 @@ struct BusOperatorSignUpScreen: View {
     }
 
     private func handleSignUp() {
-        // Validation and Firebase integration logic
+        // Validation
         userIDError = userID.isEmpty
         licensePlateError = licensePlateNumber.isEmpty
         busTypeError = busType == nil
         busRouteError = selectedRoute == nil
         passwordError = password.isEmpty
         confirmPasswordError = confirmPassword.isEmpty
-        
+
         if userIDError || licensePlateError || busTypeError || busRouteError || passwordError || confirmPasswordError {
             alertMessage = "Please fill in all the fields correctly."
             showAlert = true
             return
         }
-        
+
         guard password == confirmPassword else {
             alertMessage = "Passwords do not match."
             showAlert = true
             return
         }
-        
+
         let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
         let authURL = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=\(apiKey)")!
-        
+
         var authRequest = URLRequest(url: authURL)
         authRequest.httpMethod = "POST"
         authRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let authPayload: [String: Any] = [
             "email": userID,
             "password": password,
             "returnSecureToken": true
         ]
-        
+
         authRequest.httpBody = try? JSONSerialization.data(withJSONObject: authPayload)
-        
+
         URLSession.shared.dataTask(with: authRequest) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -190,7 +190,7 @@ struct BusOperatorSignUpScreen: View {
                 }
                 return
             }
-            
+
             guard let data = data,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let localId = json["localId"] as? String else {
@@ -200,30 +200,40 @@ struct BusOperatorSignUpScreen: View {
                 }
                 return
             }
-            
-            saveBusOperatorInfo(localId: localId)
+
+            // ✅ Save the UID and Token in UserDefaults for session persistence
+            if let idToken = json["idToken"] as? String {
+                UserDefaults.standard.set(localId, forKey: "user_uid")
+                UserDefaults.standard.set(idToken, forKey: "user_id_token")
+                UserDefaults.standard.set("bus_operator", forKey: "user_type")
+                print("✅ UID Saved: \(localId)")
+                print("✅ Token Saved: \(idToken)")
+            }
+
+            // ✅ Now save the bus operator info
+            self.saveBusOperatorInfo(localId: localId)
         }.resume()
     }
     
     private func saveBusOperatorInfo(localId: String) {
         let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(localId).json"
-        
+
         guard let url = URL(string: databaseURL) else { return }
-        
-        // Include the selectedRoute here in the Firebase data
+
         let busOperatorData: [String: Any] = [
+            "user_id": localId,  // ✅ Store the Firebase UID (important for identification)
             "email": userID,
             "licensePlateNumber": licensePlateNumber,
             "busType": busType ?? "",
             "busRoute": selectedRoute ?? "",
             "timestamp": Int(Date().timeIntervalSince1970)
         ]
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: busOperatorData)
-        
+
         URLSession.shared.dataTask(with: request) { _, _, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -233,7 +243,7 @@ struct BusOperatorSignUpScreen: View {
             } else {
                 DispatchQueue.main.async {
                     showToast = true
-                    
+
                     // Navigate to login screen after toast
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         showToast = false
