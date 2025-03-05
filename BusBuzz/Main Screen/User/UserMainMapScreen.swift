@@ -6,6 +6,14 @@ struct UserMainMapScreen: View {
     @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
     var selectedRoute: BusRoute
+    @State private var searchText: String = ""
+    @State private var isPickerVisible: Bool = false
+    @State private var selectedRouteFromPicker: BusRoute? = nil
+
+    // Fetching all available routes
+    var availableRoutes: [BusRoute] {
+        return BusRoute.allRoutes
+    }
 
     var body: some View {
         ZStack {
@@ -17,7 +25,9 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
-                    viewModel.loadPolyline(for: selectedRoute)
+                    if let route = selectedRouteFromPicker {
+                        viewModel.loadPolyline(for: route)
+                    }
                 }
             )
             .edgesIgnoringSafeArea(.top)
@@ -26,6 +36,47 @@ struct UserMainMapScreen: View {
             }
 
             VStack {
+                // Search Bar with Picker Dropdown
+                VStack {
+                    if availableRoutes.isEmpty {
+                        Text("Select a route")
+                            .foregroundColor(.gray)
+                            .padding()
+                            .background(AppColors.grayBackground)
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                    } else {
+                        // Dropdown Picker for selecting route
+                        Picker("Select Route", selection: $selectedRouteFromPicker) {
+                            ForEach(availableRoutes, id: \.id) { route in
+                                Text(route.name) // Show the name of each route
+                                    .tag(route as BusRoute?)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle()) // Menu style will show it as a dropdown
+                        .frame(height: 50) // Adjust height for better alignment
+                        .background(AppColors.grayBackground)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                    }
+
+                    // Button to find the selected route's bus
+                    Button(action: {
+                        if let selectedRoute = selectedRouteFromPicker {
+                            // Call the logic to center the map on the selected route
+                            viewModel.loadPolyline(for: selectedRoute)
+                        }
+                    }) {
+                        Text("Find a Bus")
+                            .padding()
+                            .background(AppColors.buttonGreen)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                    }
+                }
+                .padding(.top, 10) // Adjust top padding to make the layout clean
+
                 Spacer()
             }
 
@@ -40,10 +91,10 @@ struct UserMainMapScreen: View {
         }
         .onAppear {
             // Fetch route details on appearance and set up map
-            viewModel.loadPolyline(for: selectedRoute)
-            viewModel.centerMapOnUser()
+            if let route = selectedRouteFromPicker {
+                viewModel.loadPolyline(for: route)
+                viewModel.centerMapOnUser()
+            }
         }
     }
 }
-
-

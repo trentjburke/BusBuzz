@@ -22,9 +22,9 @@ struct BusOperatorSignUpScreen: View {
     
     let busTypes = ["Government Bus", "Private Bus", "Highway Bus"]
     let busRoutes = [
-        "120 Colombo - Kesbewa",
-        "119 Dehiwala - Maharagama",
-        "Ex-01 Colombo Makumbara Bus Station - Galle Central Bus Station"
+        "120",
+        "119",
+        "Ex-01"
     ]
     
     var body: some View {

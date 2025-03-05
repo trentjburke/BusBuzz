@@ -68,7 +68,7 @@ struct LaunchScreen: View {
                                             .frame(width: 120, height: 120)
                                             .clipShape(Circle())
                                             .overlay(Circle().stroke(AppColors.buttonGreen, lineWidth: 5))
-                                        Text("User")
+                                        Text("Commuter")
                                             .font(.system(size: 25, weight: .bold))
                                             .foregroundColor(.white)
                                     }

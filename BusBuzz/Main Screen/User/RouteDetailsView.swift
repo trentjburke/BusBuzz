@@ -148,8 +148,7 @@ struct RouteDetailsView: View {
                     .padding()
             }
             .background(
-                NavigationLink("", destination: UserMainMapScreen(selectedRoute: route), isActive: $navigateToMap)
-                    .hidden()
+                
             )
         }
         .background(AppColors.background.edgesIgnoringSafeArea(.all))
@@ -222,7 +221,7 @@ struct RouteDetailsView: View {
             case "Onboarding":
                 return Color.green
             case "Scheduled":
-                return Color.yellow
+                return Color.orange
             default:
                 return Color.red
             }

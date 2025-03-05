@@ -15,6 +15,9 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
 
     private let googleMapsAPIKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
     
+    
+    
+    
     // Hardcoded polyline data for the routes
     private let routePolylines: [String: [CLLocationCoordinate2D]] = [
         "119": [

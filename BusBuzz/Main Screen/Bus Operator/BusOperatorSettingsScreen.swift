@@ -51,18 +51,6 @@ class BusOperatorSettingsViewModel: NSObject, ObservableObject, CLLocationManage
         }.resume()
     }
 
-//    // Real-time location updates
-//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        guard let latestLocation = locations.last else { return }
-//        
-//        DispatchQueue.main.async {
-//            self.busLocation = latestLocation.coordinate
-//            if self.isOnline {
-//                self.updateLocationToFirebase()
-//            }
-//        }
-//    }
-
     // Enable or disable online status and start/stop location updates
     func toggleOnlineStatus(isOnline: Bool) {
         self.isOnline = isOnline
@@ -172,11 +160,49 @@ class BusOperatorSettingsViewModel: NSObject, ObservableObject, CLLocationManage
     }
 }
 
+// Function to update route interchange status in Firebase
+private func updateRouteInterchangeStatus(isActive: Bool) {
+    // Get the user ID from UserDefaults
+    guard let userId = UserDefaults.standard.string(forKey: "user_uid") else {
+        print("❌ No user_id found in UserDefaults. User must log in.")
+        return
+    }
+
+    // Construct the URL for the Firebase database reference
+    let databaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(userId).json"
+    guard let url = URL(string: databaseURL) else {
+        print("❌ Invalid Firebase Database URL")
+        return
+    }
+
+    // Prepare the data to update the route interchange status
+    let updateData: [String: Any] = [
+        "routeInterchange": isActive  // Save the toggle status as true or false
+    ]
+
+    // Create the request to update the database
+    var request = URLRequest(url: url)
+    request.httpMethod = "PATCH"  // Use PATCH to update specific fields
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpBody = try? JSONSerialization.data(withJSONObject: updateData)
+
+    // Make the API call to update the data in Firebase
+    URLSession.shared.dataTask(with: request) { _, _, error in
+        if let error = error {
+            print("❌ Failed to update route interchange status: \(error.localizedDescription)")
+        } else {
+            print("✅ Route interchange status updated successfully in Firebase.")
+        }
+    }.resume()
+}
+
 struct BusOperatorSettingsScreen: View {
     @State private var isOnline: Bool = false
     @State private var showLoginScreen = false
+    @State private var isRouteActive: Bool = false
     @StateObject private var viewModel = BusOperatorSettingsViewModel()
-
+    
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -215,7 +241,7 @@ struct BusOperatorSettingsScreen: View {
                                     if value {
                                         viewModel.toggleOnlineStatus(isOnline: true)
                                     } else {
-                                        viewModel.toggleOnlineStatus(isOnline: false) 
+                                        viewModel.toggleOnlineStatus(isOnline: false)
                                     }
                                 }
                         }
@@ -223,7 +249,36 @@ struct BusOperatorSettingsScreen: View {
                         .background(AppColors.grayBackground)
                         .cornerRadius(8)
                         .padding(.horizontal)
+                        
+                        // Route Info and Toggle Card
+                        HStack {
+                            // Displaying "Route Interchange" text
+                            Text("Route Interchange")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(AppColors.background)  // You can change the color here as needed
+                                .padding(12)
+                                .background(AppColors.grayBackground)
+                                .cornerRadius(8)
+                                .padding(.leading)
 
+                            Spacer()
+
+                            // Toggle aligned in the right corner
+                            Toggle("", isOn: $isRouteActive)
+                                .labelsHidden()
+                                .onChange(of: isRouteActive) { value in
+                                    updateRouteInterchangeStatus(isActive: value)
+                                }
+                                .toggleStyle(SwitchToggleStyle(tint: AppColors.buttonGreen))
+                                .padding(10)
+                                .background(AppColors.grayBackground)
+                                .cornerRadius(8)
+                                .padding(.horizontal)
+                        }
+                        .padding(10)
+                        .background(AppColors.grayBackground)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
                         // Settings Rows
                         SettingsRow(iconName: "Application info", title: "Application Info", textColor: AppColors.background, destination: AnyView(ApplicationInfoView()))
                         SettingsRow(iconName: "User Manual", title: "User Manual", textColor: AppColors.background, destination: AnyView(UserManualPDFView()))

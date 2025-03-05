@@ -121,22 +121,28 @@ struct BusOperatorLoginScreen: View {
                     }
 
                     HStack {
-                        Text("Don’t have an account?")
-                            .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(.white)
+                         Text("Don’t have an account?")
+                             .font(.system(size: 16, weight: .regular))
+                             .foregroundColor(.white)
 
-                        NavigationLink(destination: BusOperatorSignUpScreen().navigationBarBackButtonHidden(true)) {
-                            Text("Sign Up")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(AppColors.buttonGreen)
-                        }
-                    }
-                    .padding(.top, 5)
-                    NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
-                        Text("Are you a passenger?")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(AppColors.buttonGreen)
-                    }
+                         NavigationLink(destination: BusOperatorSignUpScreen().navigationBarBackButtonHidden(true)) {
+                             Text("Sign Up")
+                                 .font(.system(size: 16, weight: .bold))
+                                 .foregroundColor(AppColors.buttonGreen)
+                         }
+                     }
+                     .padding(.top, -15) // Reduced padding to bring it closer to the Sign In button
+
+                
+                     // Move "Are you a passenger?" to the bottom of the screen
+                     NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
+                         Text("Are you a commuter?")
+                             .font(.system(size: 16, weight: .bold))
+                             .foregroundColor(AppColors.buttonGreen)
+                     }
+                    
+                     .padding(.bottom, 15 ) // Added padding to push it further down
+                    
                 }
             }
             .alert(isPresented: $showAlert) {

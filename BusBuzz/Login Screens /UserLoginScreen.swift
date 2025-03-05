@@ -196,7 +196,7 @@ struct UserLoginScreen: View {
                     .padding(.horizontal, 40)
                     .padding(.top, 10)
                     NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
-                        Text("Are you a bus driver?")
+                        Text("Are you a Bus Operator?")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(AppColors.buttonGreen)
                     }
