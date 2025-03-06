@@ -5,10 +5,9 @@ import CoreLocation
 struct UserMainMapScreen: View {
     @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
-    var selectedRoute: BusRoute
+    @State private var selectedRouteFromPicker: BusRoute?
     @State private var searchText: String = ""
     @State private var isPickerVisible: Bool = false
-    @State private var selectedRouteFromPicker: BusRoute? = nil
 
     // Fetching all available routes
     var availableRoutes: [BusRoute] {
@@ -25,14 +24,19 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
+                    
+                    // Only load polyline and operators if a route is selected
                     if let route = selectedRouteFromPicker {
                         viewModel.loadPolyline(for: route)
                     }
                 }
             )
             .edgesIgnoringSafeArea(.top)
-            .onAppear() {
-                viewModel.observeOnlineBusOperators()
+            .onAppear {
+                // Ensure selectedRouteFromPicker is passed to observeOnlineBusOperators
+                if let route = selectedRouteFromPicker {
+                    viewModel.observeOnlineBusOperators(selectedRoute: route)  // Pass selected route here
+                }
             }
 
             VStack {
@@ -90,8 +94,9 @@ struct UserMainMapScreen: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear {
-            // Fetch route details on appearance and set up map
+            // Ensure selectedRouteFromPicker is passed to observeOnlineBusOperators
             if let route = selectedRouteFromPicker {
+                viewModel.observeOnlineBusOperators(selectedRoute: route)  // Pass the selected route here
                 viewModel.loadPolyline(for: route)
                 viewModel.centerMapOnUser()
             }

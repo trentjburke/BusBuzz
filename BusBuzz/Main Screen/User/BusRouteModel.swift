@@ -123,6 +123,33 @@ struct BusRoute: Identifiable, Hashable, Equatable {
             ("Lake House", CLLocationCoordinate2D(latitude: 6.9326515723345175, longitude: 79.84789575254854)),
             ("Pettah", CLLocationCoordinate2D(latitude: 6.927039678349846, longitude: 79.86118582377492))
         ], isReverse: false, currentBusStop: nil),
+        
+        BusRoute(routeNumber: "120", name: "120 - Colombo to Kesbewa", stops: [
+            ("Pettah", CLLocationCoordinate2D(latitude: 6.927039678349846, longitude: 79.86118582377492)),
+            ("Lake House", CLLocationCoordinate2D(latitude: 6.9326515723345175, longitude: 79.84789575254854)),
+            ("SL Exhibition Centre", CLLocationCoordinate2D(latitude: 6.932525092332875, longitude: 79.84945389384576)),
+            ("Lotus Tower", CLLocationCoordinate2D(latitude: 6.929199381651755, longitude: 79.85692673395766)),
+            ("Gamani Hall Junction", CLLocationCoordinate2D(latitude: 6.927029364620313, longitude: 79.86123904857823)),
+            ("T.B. Jayah Road (Darley Road)", CLLocationCoordinate2D(latitude: 6.923288970296334, longitude: 79.86188877935501)),
+            ("Ibbanwala Junction", CLLocationCoordinate2D(latitude: 6.918112320713323, longitude: 79.86252787124621)),
+            ("Town Hall", CLLocationCoordinate2D(latitude: 6.916575274016843, longitude: 79.86496237288942)),
+            ("Nelum Pokuna", CLLocationCoordinate2D(latitude: 6.909578447928814, longitude: 79.8637048891096)),
+            ("RaceCourse", CLLocationCoordinate2D(latitude: 6.9061470332288675, longitude: 79.86368398061377)),
+            ("Colombo Campus", CLLocationCoordinate2D(latitude: 6.902672680153752, longitude: 79.86225119338751)),
+            ("Thummulla", CLLocationCoordinate2D(latitude: 6.8956742076789705, longitude: 79.86054385945774)),
+            ("Thimbirigasyaya Junction", CLLocationCoordinate2D(latitude: 6.893343076976488, longitude: 79.86194183007606)),
+            ("Havelock City", CLLocationCoordinate2D(latitude: 6.8828786844758225, longitude: 79.86884954743292)),
+            ("Pamankada", CLLocationCoordinate2D(latitude: 6.876558877657431, longitude: 79.86998012967204)),
+            ("Dutugemunu Street", CLLocationCoordinate2D(latitude: 6.87069532901583, longitude: 79.87737139618588)),
+            ("Kohuwala", CLLocationCoordinate2D(latitude: 6.868329177951234, longitude: 79.8833955416306)),
+            ("Pepiliyana", CLLocationCoordinate2D(latitude: 6.856082607757802, longitude: 79.89072505915735)),
+            ("Rattanapitiya", CLLocationCoordinate2D(latitude: 6.84865000185514, longitude: 79.8966974930631)),
+            ("Boralesgamuwa", CLLocationCoordinate2D(latitude: 6.839517912648861, longitude: 79.90273906563667)),
+            ("Werahera", CLLocationCoordinate2D(latitude: 6.833299940014564, longitude: 79.9057083114398)),
+            ("Bokundara", CLLocationCoordinate2D(latitude: 6.819962071109644, longitude: 79.91685564805408)),
+            ("Piliyandala", CLLocationCoordinate2D(latitude: 6.800700234591165, longitude: 79.92365831075625)),
+            ("Kesbewa", CLLocationCoordinate2D(latitude: 6.801681174282759, longitude: 79.9239695642226))
+        ], isReverse: true, currentBusStop: nil),
 
         BusRoute(routeNumber: "Ex01", name: "Ex01 - Makumbura to Galle", stops: [
             ("Makumbura", CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763)),
@@ -134,6 +161,15 @@ struct BusRoute: Identifiable, Hashable, Equatable {
             ("Galle", CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149))
         ], isReverse: false, currentBusStop: nil),
         
+        BusRoute(routeNumber: "Ex01", name: "Ex01 - Galle to Makumbura", stops: [
+            ("Galle", CLLocationCoordinate2D(latitude: 6.0324, longitude: 80.2149)),
+            ("Dewata", CLLocationCoordinate2D(latitude: 6.036741508932712, longitude: 80.22958014758323)),
+            ("Dileka Street", CLLocationCoordinate2D(latitude: 6.041674246199178, longitude: 80.23701521326672)),
+            ("Main Street Galle", CLLocationCoordinate2D(latitude: 6.034974308785326, longitude: 80.22002186648511)),
+            ("Malgaha Junction", CLLocationCoordinate2D(latitude: 6.047381125376059, longitude: 80.24852018128948)),
+            ("Southern Expressway", CLLocationCoordinate2D(latitude: 6.049904966831381, longitude: 80.25611495252512)),
+            ("Makumbura", CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763))
+        ], isReverse: true, currentBusStop: nil),
         ]
 
     }

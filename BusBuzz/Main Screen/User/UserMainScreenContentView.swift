@@ -27,7 +27,7 @@ struct UserMainScreenContentView: View {
                        .tag(0)
 
                    // Map Tab
-                   UserMainMapScreen(selectedRoute: selectedRoute ?? BusRoute.defaultRoute)
+                   UserMainMapScreen()
                        .tabItem {
                            VStack {
                                Image(systemName: "location.circle")
