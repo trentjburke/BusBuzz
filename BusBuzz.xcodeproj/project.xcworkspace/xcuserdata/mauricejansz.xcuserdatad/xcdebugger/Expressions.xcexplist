@@ -3,25 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "UserMainMapScreenViewModel.observeOnlineBusOperators():UserMainMapScreenViewModel.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "dbRef.observe(.value)">
-            </PersistentString>
-            <PersistentString
-               value = "dbRef">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "BusOperatorSettingsScreen.startSharingLocation():BusOperatorSettingsScreen.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "Auth.auth()">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "BusOperatorSettingsViewModel.toggleOnlineStatus(isOnline:):BusOperatorSettingsScreen.swift">
          <PersistentStrings>
             <PersistentString
@@ -29,6 +10,14 @@
             </PersistentString>
             <PersistentString
                value = "UserDefaults.standard.string(forKey: &quot;userId&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in UserMainMapScreenViewModel.startOnlineBusTimer():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "BusRoute.defaultRoute">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -53,6 +42,25 @@
          <PersistentStrings>
             <PersistentString
                value = "navigateToBusOperatorMainScreen">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BusOperatorSettingsScreen.startSharingLocation():BusOperatorSettingsScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Auth.auth()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UserMainMapScreenViewModel.observeOnlineBusOperators():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "dbRef.observe(.value)">
+            </PersistentString>
+            <PersistentString
+               value = "dbRef">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

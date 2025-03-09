@@ -5,11 +5,8 @@ import CoreLocation
 struct UserMainMapScreen: View {
     @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
-    @State private var selectedRouteFromPicker: BusRoute?
-    @State private var searchText: String = ""
-    @State private var isPickerVisible: Bool = false
+    @State private var selectedRouteFromPicker: BusRoute? = BusRoute.allRoutes.first // ✅ Set default value
 
-    // Fetching all available routes
     var availableRoutes: [BusRoute] {
         return BusRoute.allRoutes
     }
@@ -24,67 +21,51 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
-                    
-                    // Only load polyline and operators if a route is selected
+
+                    // Load polyline and observe operators for the selected route
                     if let route = selectedRouteFromPicker {
                         viewModel.loadPolyline(for: route)
+                        viewModel.observeOnlineBusOperators(selectedRoute: route)
                     }
                 }
             )
             .edgesIgnoringSafeArea(.top)
-            .onAppear {
-                // Ensure selectedRouteFromPicker is passed to observeOnlineBusOperators
-                if let route = selectedRouteFromPicker {
-                    viewModel.observeOnlineBusOperators(selectedRoute: route)  // Pass selected route here
-                }
-            }
 
             VStack {
-                // Search Bar with Picker Dropdown
-                VStack {
-                    if availableRoutes.isEmpty {
-                        Text("Select a route")
-                            .foregroundColor(.gray)
-                            .padding()
-                            .background(AppColors.grayBackground)
-                            .cornerRadius(8)
-                            .padding(.horizontal)
-                    } else {
-                        // Dropdown Picker for selecting route
-                        Picker("Select Route", selection: $selectedRouteFromPicker) {
-                            ForEach(availableRoutes, id: \.id) { route in
-                                Text(route.name) // Show the name of each route
-                                    .tag(route as BusRoute?)
-                            }
+                HStack {
+                    // Picker for selecting a route
+                    Picker("Select Route", selection: $selectedRouteFromPicker) {
+                        ForEach(availableRoutes, id: \.id) { route in
+                            Text(route.name)
+                                .tag(route as BusRoute?)
                         }
-                        .pickerStyle(MenuPickerStyle()) // Menu style will show it as a dropdown
-                        .frame(height: 50) // Adjust height for better alignment
-                        .background(AppColors.grayBackground)
-                        .cornerRadius(8)
-                        .padding(.horizontal)
                     }
+                    .pickerStyle(MenuPickerStyle())
+                    .frame(height: 50)
+                    .frame(maxWidth: .infinity) // ✅ Ensure it takes available space
+                    .background(AppColors.grayBackground)
+                    .cornerRadius(8)
 
-                    // Button to find the selected route's bus
+                    // Find Bus Button
                     Button(action: {
                         if let selectedRoute = selectedRouteFromPicker {
-                            // Call the logic to center the map on the selected route
                             viewModel.loadPolyline(for: selectedRoute)
+                            viewModel.observeOnlineBusOperators(selectedRoute: selectedRoute)
                         }
                     }) {
                         Text("Find a Bus")
-                            .padding()
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
                             .background(AppColors.buttonGreen)
                             .foregroundColor(.white)
                             .cornerRadius(8)
-                            .padding(.horizontal)
                     }
                 }
-                .padding(.top, 10) // Adjust top padding to make the layout clean
-
+                .padding(.horizontal) // ✅ Padding for alignment
+                
                 Spacer()
             }
 
-            // Gray background for bottom tab view
             VStack {
                 Spacer()
                 AppColors.grayBackground
@@ -93,12 +74,10 @@ struct UserMainMapScreen: View {
             }
             .edgesIgnoringSafeArea(.bottom)
         }
-        .onAppear {
-            // Ensure selectedRouteFromPicker is passed to observeOnlineBusOperators
-            if let route = selectedRouteFromPicker {
-                viewModel.observeOnlineBusOperators(selectedRoute: route)  // Pass the selected route here
-                viewModel.loadPolyline(for: route)
-                viewModel.centerMapOnUser()
+        .onChange(of: selectedRouteFromPicker) { newRoute in
+            if let selectedRoute = newRoute {
+                viewModel.updateSelectedRoute(selectedRoute) // ✅ Updates route & restarts timer
+                viewModel.loadPolyline(for: selectedRoute)
             }
         }
     }

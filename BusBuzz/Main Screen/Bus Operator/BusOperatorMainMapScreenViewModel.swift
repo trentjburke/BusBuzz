@@ -142,6 +142,15 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
         self.googleMapView?.settings.scrollGestures = true
         self.googleMapView?.settings.rotateGestures = true
         self.googleMapView?.settings.tiltGestures = true
+        
+        if let location = busLocation {
+            let camera = GMSCameraPosition.camera(
+                withLatitude: location.latitude,
+                longitude: location.longitude,
+                zoom: 15.0
+            )
+            self.googleMapView?.animate(to: camera)
+        }
     }
 
     // Real-time updates when the bus moves
