@@ -6,11 +6,11 @@ struct UserMainMapScreen: View {
     @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
     @State private var selectedRouteFromPicker: BusRoute? = BusRoute.allRoutes.first // ✅ Set default value
-
+    
     var availableRoutes: [BusRoute] {
         return BusRoute.allRoutes
     }
-
+    
     var body: some View {
         ZStack {
             // Google Map view with route polyline and user location
@@ -21,7 +21,7 @@ struct UserMainMapScreen: View {
                 onMapReady: { map in
                     self.googleMapView = map
                     viewModel.setGoogleMapView(map)
-
+                    
                     // Load polyline and observe operators for the selected route
                     if let route = selectedRouteFromPicker {
                         viewModel.loadPolyline(for: route)
@@ -30,7 +30,7 @@ struct UserMainMapScreen: View {
                 }
             )
             .edgesIgnoringSafeArea(.top)
-
+            
             VStack {
                 HStack {
                     // Picker for selecting a route
@@ -45,7 +45,7 @@ struct UserMainMapScreen: View {
                     .frame(maxWidth: .infinity) // ✅ Ensure it takes available space
                     .background(AppColors.grayBackground)
                     .cornerRadius(8)
-
+                    
                     // Find Bus Button
                     Button(action: {
                         if let selectedRoute = selectedRouteFromPicker {
@@ -64,8 +64,20 @@ struct UserMainMapScreen: View {
                 .padding(.horizontal) // ✅ Padding for alignment
                 
                 Spacer()
+                if (viewModel.selectedBusId != nil) {
+                    Text(viewModel.etaText)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(AppColors.background.opacity(0.8))
+                        .cornerRadius(10)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 40)
+                }
+                
             }
-
+            
             VStack {
                 Spacer()
                 AppColors.grayBackground

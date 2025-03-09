@@ -2,7 +2,9 @@ import SwiftUI
 
 struct AppColors {
     static let background = Color(hex: "#01122E")
+    static let busBlue = Color(hex: "#01122E")
     static let buttonGreen = Color(hex: "#34A062")
+    static let busGreen = Color(hex: "#34A062")
     static let grayBackground = Color(hex: "#D6D6D6")
 }
 

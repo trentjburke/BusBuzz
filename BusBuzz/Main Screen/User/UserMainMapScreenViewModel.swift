@@ -16,7 +16,12 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
     private let googleMapsAPIKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
     
     private var onlineBusTimer: Timer?
+    private var selectedBusTimer: Timer?
     private var selectedRoute: BusRoute?
+    @Published var selectedBusId: String?  // Holds the ID of the selected bus
+    @Published var selectedBusLocation: CLLocationCoordinate2D?  // Holds the selected bus location
+    @Published var etaText: String = "ETA: Calculating..."
+    private var etaUpdateTimer: Timer?
     
     // Hardcoded polyline data for the routes
     private let routePolylines: [String: [CLLocationCoordinate2D]] = [
@@ -55,8 +60,100 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
             self.observeOnlineBusOperators(selectedRoute: selectedRoute)
         }
     }
+    
+    func startTrackingSelectedBus(busId: String) {
+        selectedBusId = busId
+        selectedBusTimer?.invalidate()  // Stop previous tracking
+        etaUpdateTimer?.invalidate()    // Stop previous ETA updates
+        
+        // Immediately fetch the bus location first
+        fetchSelectedBusLocation { [weak self] location in
+            guard let self = self, let busLocation = location else { return }
+            
+            DispatchQueue.main.async {
+                self.selectedBusLocation = busLocation  // ✅ Set bus location immediately
+                self.updateCameraForUserAndBus()       // ✅ Ensure camera updates properly
+                self.updateETA()                       // ✅ Update ETA immediately
+            }
+            
+            // Start tracking with a timer
+            self.selectedBusTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+                self.observeSelectedBusLocation()
+            }
+            
+            // Start ETA update timer
+            self.etaUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+                self.updateETA()
+            }
+        }
+    }
+    
+    private func fetchSelectedBusLocation(completion: @escaping (CLLocationCoordinate2D?) -> Void) {
+        guard let selectedBusId = selectedBusId else {
+            completion(nil)
+            return
+        }
+        
+        let firebaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(selectedBusId).json"
+        
+        guard let url = URL(string: firebaseURL) else {
+            print("❌ Invalid Firebase URL")
+            completion(nil)
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Failed to fetch selected bus: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data else {
+                print("❌ No data received from Firebase")
+                completion(nil)
+                return
+            }
+            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let isOnline = json["isOnline"] as? Bool, isOnline,
+                   let latitude = json["latitude"] as? Double,
+                   let longitude = json["longitude"] as? Double {
+                    
+                    let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                    completion(location)  // ✅ Return the fetched location
+                } else {
+                    completion(nil)
+                }
+            } catch {
+                print("❌ Error decoding Firebase JSON: \(error.localizedDescription)")
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+    private func updateCameraForUserAndBus() {
+        guard let mapView = googleMapView, let busLocation = selectedBusLocation, let userLocation = userLocation else { return }
+        
+        var bounds = GMSCoordinateBounds()
+        bounds = bounds.includingCoordinate(busLocation)
+        bounds = bounds.includingCoordinate(userLocation)
+        
+        let update = GMSCameraUpdate.fit(bounds, withPadding: 100) // Adjust padding as needed
+        mapView.animate(with: update)
+    }
+    
     func updateSelectedRoute(_ route: BusRoute) {
         self.selectedRoute = route
+        self.selectedBusId = nil  // ✅ Reset selected bus
+        self.selectedBusLocation = nil  // ✅ Reset selected bus location
+        etaText = "ETA: N/A"  // ✅ Reset ETA display
+        etaUpdateTimer?.invalidate() // ✅ Stop ETA updates
+        
         observeOnlineBusOperators(selectedRoute: route)
         startOnlineBusTimer() // Restart timer with new route
     }
@@ -117,6 +214,7 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
     // Sets the Google Map view when it's ready
     func setGoogleMapView(_ mapView: GMSMapView) {
         self.googleMapView = mapView
+        self.googleMapView?.delegate = self
         self.googleMapView?.isMyLocationEnabled = true
         self.googleMapView?.settings.myLocationButton = true
         self.googleMapView?.settings.zoomGestures = true
@@ -199,6 +297,7 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
                         DispatchQueue.main.async {
                             self.filteredBusOperators = updatedOperators
                             self.updateMapWithFilteredBusOperators()
+                            self.updateETA()
                         }
                     }
                 } catch {
@@ -208,22 +307,47 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         }.resume()
     }
     
-    // Update the map with filtered bus operators based on the selected route and reverse status
     private func updateMapWithFilteredBusOperators() {
         guard let mapView = googleMapView else { return }
         mapView.clear()  // Clear previous markers
         
-        // Add markers for the filtered bus operators
-        for (licensePlateNumber, location) in filteredBusOperators {
+        for (busId, location) in filteredBusOperators {
             let marker = GMSMarker(position: location)
+            marker.title = "Bus \(busId)"
             
-            if let busIcon = UIImage(named: "BusIconBlue") {
-                let scaledBusIcon = resizeImage(image: busIcon, targetSize: CGSize(width: 40, height: 40))  // Adjust size as needed
-                marker.icon = scaledBusIcon
+            // ✅ Ensure selected bus remains green even after refresh
+            if busId == selectedBusId {
+                marker.icon = getColoredBusIcon(color: .green)  // Green for selected bus
+            } else {
+                marker.icon = getColoredBusIcon(color: .blue)   // Blue for others
             }
             
-            marker.title = "Bus \(licensePlateNumber)"
             marker.map = mapView
+            marker.userData = busId  // Store bus ID for selection tracking
+        }
+    }
+    
+    private func getColoredBusIcon(color: Color, size: CGSize = CGSize(width: 35, height: 35)) -> UIImage? {
+        guard let busIcon = UIImage(named: "busIcon") else {
+            print("❌ Error: Could not load busIcon image")
+            return nil
+        }
+        
+        let uiColor = UIColor(color) // Convert SwiftUI Color to UIColor
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        return renderer.image { context in
+            uiColor.setFill()
+            context.cgContext.translateBy(x: 0, y: size.height)
+            context.cgContext.scaleBy(x: 1.0, y: -1.0)
+            
+            let rect = CGRect(origin: .zero, size: size)
+            if let cgImage = busIcon.cgImage {
+                context.cgContext.clip(to: rect, mask: cgImage)
+                context.cgContext.fill(rect)
+            } else {
+                print("❌ Error: Could not get CGImage from busIcon")
+            }
         }
     }
     
@@ -232,6 +356,165 @@ class UserMainMapScreenViewModel: NSObject, ObservableObject, CLLocationManagerD
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
             image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+    
+    func observeSelectedBusLocation() {
+        guard let selectedBusId = selectedBusId else { return }
+        
+        let firebaseURL = "https://busbuzz-5571f-default-rtdb.asia-southeast1.firebasedatabase.app/busOperators/\(selectedBusId).json"
+        
+        guard let url = URL(string: firebaseURL) else {
+            print("❌ Invalid Firebase URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Failed to fetch selected bus: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let data = data else {
+                print("❌ No data received from Firebase")
+                return
+            }
+            
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let isOnline = json["isOnline"] as? Bool, isOnline,
+                       let latitude = json["latitude"] as? Double,
+                       let longitude = json["longitude"] as? Double {
+                        
+                        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                        
+                        DispatchQueue.main.async {
+                            self.selectedBusLocation = location
+                            self.updateSelectedBusMarker(location: location)
+                            self.updateETA()
+                        }
+                    }
+                } catch {
+                    print("❌ Error decoding Firebase JSON: \(error.localizedDescription)")
+                }
+            }
+        }.resume()
+    }
+    private func updateSelectedBusMarker(location: CLLocationCoordinate2D) {
+        guard let mapView = googleMapView else { return }
+        
+        // Clear only the previous selected bus marker, NOT all markers
+        mapView.clear()
+        
+        // ✅ Add back all buses with their original colors
+        for (busId, busLocation) in filteredBusOperators {
+            let busMarker = GMSMarker(position: busLocation)
+            busMarker.title = "Bus \(busId)"
+            
+            // ✅ Check if this is the selected bus
+            if busId == selectedBusId {
+                busMarker.icon = getColoredBusIcon(color: .green) // Selected bus in green
+            } else {
+                busMarker.icon = getColoredBusIcon(color: .blue) // Other buses in blue
+            }
+            
+            busMarker.map = mapView
+            busMarker.userData = busId // Store bus ID for selection tracking
+        }
+        
+        // ✅ Create and update the selected bus marker
+        let selectedBusMarker = GMSMarker(position: location)
+        selectedBusMarker.title = "Tracking Bus"
+        
+        // ✅ Ensure selected bus stays green
+        selectedBusMarker.icon = getColoredBusIcon(color: .green)
+        selectedBusMarker.map = mapView
+        
+        // ✅ Adjust camera to fit both selected bus and user location
+        var bounds = GMSCoordinateBounds()
+        bounds = bounds.includingCoordinate(location) // Selected bus location
+        
+        if let userLocation = userLocation {
+            bounds = bounds.includingCoordinate(userLocation) // User location
+        }
+        
+        let update = GMSCameraUpdate.fit(bounds, withPadding: 80) // Adjust padding
+        mapView.animate(with: update)
+    }
+    
+    func findNearestStop(to location: CLLocationCoordinate2D, in route: BusRoute) -> (name: String, location: CLLocationCoordinate2D)? {
+        guard !route.stops.isEmpty else { return nil }
+        
+        return route.stops.min(by: {
+            let distance1 = distanceBetween(coord1: location, coord2: $0.location)
+            let distance2 = distanceBetween(coord1: location, coord2: $1.location)
+            return distance1 < distance2
+        })
+    }
+    
+    func calculateETA(busLocation: CLLocationCoordinate2D, stopLocation: CLLocationCoordinate2D) -> String {
+        guard let selectedRoute = selectedRoute else { return "ETA: N/A" }
+        
+        // Calculate distance in meters
+        let distanceMeters = distanceBetween(coord1: busLocation, coord2: stopLocation)
+        let speedMetersPerSecond: Double = 8.33 // ~30 km/h in meters per second
+        
+        // Find stops between bus and target stop
+        let stopsBetween = stopsBetweenBusAndStop(busLocation: busLocation, stopLocation: stopLocation, route: selectedRoute)
+        
+        // Calculate travel time
+        let etaSeconds = (distanceMeters / speedMetersPerSecond) + (Double(stopsBetween) * 30) // Add 30s per stop
+        let etaMinutes = Int(etaSeconds / 60)
+        
+        return etaMinutes > 0 ? "\(etaMinutes) min" : "< 1 min"
+    }
+    func stopsBetweenBusAndStop(busLocation: CLLocationCoordinate2D, stopLocation: CLLocationCoordinate2D, route: BusRoute) -> Int {
+        guard let busIndex = route.stops.firstIndex(where: { distanceBetween(coord1: busLocation, coord2: $0.location) < 200 }) else { return 0 }
+        guard let stopIndex = route.stops.firstIndex(where: { distanceBetween(coord1: stopLocation, coord2: $0.location) < 200 }) else { return 0 }
+        
+        return abs(stopIndex - busIndex) // Number of stops in between
+    }
+    
+    // Haversine formula to calculate distance
+    func distanceBetween(coord1: CLLocationCoordinate2D, coord2: CLLocationCoordinate2D) -> Double {
+        let loc1 = CLLocation(latitude: coord1.latitude, longitude: coord1.longitude)
+        let loc2 = CLLocation(latitude: coord2.latitude, longitude: coord2.longitude)
+        return loc1.distance(from: loc2) // Returns distance in meters
+    }
+    
+    // Function to update and display ETA on UI
+    func updateETA() {
+        guard let busLocation = selectedBusLocation,
+              let userLocation = userLocation,
+              let route = selectedRoute else {
+            etaText = "ETA: N/A"
+            return
+        }
+        
+        // Find the closest stop to the user
+        guard let closestStop = findClosestStop(to: userLocation, in: route) else {
+            etaText = "ETA: N/A"
+            return
+        }
+        
+        // Fetch latest bus location before updating ETA
+        fetchSelectedBusLocation { [weak self] location in
+            guard let self = self, let latestBusLocation = location else { return }
+            
+            DispatchQueue.main.async {
+                self.selectedBusLocation = latestBusLocation  // ✅ Ensure latest bus location is used
+                self.etaText = self.calculateETA(busLocation: latestBusLocation, stopLocation: closestStop.location)
+            }
+        }
+    }
+    
+    private func findClosestStop(to location: CLLocationCoordinate2D, in route: BusRoute) -> (name: String, location: CLLocationCoordinate2D)? {
+        return route.stops.min { stop1, stop2 in
+            distanceBetween(coord1: location, coord2: stop1.location) < distanceBetween(coord1: location, coord2: stop2.location)
         }
     }
 }
@@ -246,4 +529,15 @@ struct BusOperator: Identifiable {
     var licensePlateNumber: String
     var routeInterchange: Bool
     var timestamp: Int
+}
+extension UserMainMapScreenViewModel: GMSMapViewDelegate {
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        if let busId = marker.userData as? String {
+            print("✅ Selected Bus: \(busId)")
+            selectedBusId = busId // ✅ Store selected bus
+            startTrackingSelectedBus(busId: busId)
+            updateMapWithFilteredBusOperators()  // ✅ Refresh to apply correct color
+        }
+        return true
+    }
 }

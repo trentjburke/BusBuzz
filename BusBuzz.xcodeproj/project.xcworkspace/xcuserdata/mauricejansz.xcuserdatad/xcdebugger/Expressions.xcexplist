@@ -3,17 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "BusOperatorSettingsViewModel.toggleOnlineStatus(isOnline:):BusOperatorSettingsScreen.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "UserDefaults.standard">
-            </PersistentString>
-            <PersistentString
-               value = "UserDefaults.standard.string(forKey: &quot;userId&quot;)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "closure #1 in UserMainMapScreenViewModel.startOnlineBusTimer():UserMainMapScreenViewModel.swift">
          <PersistentStrings>
             <PersistentString
@@ -22,26 +11,41 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "UserMainMapScreenViewModel.restoreFirebaseSession():UserMainMapScreenViewModel.swift">
+         contextName = "UserMainMapScreenViewModel.updateETA():UserMainMapScreenViewModel.swift">
          <PersistentStrings>
             <PersistentString
-               value = "UserDefaults.standard.string(forKey: &quot;user_id_token&quot;)">
+               value = "selectedRoute">
+            </PersistentString>
+            <PersistentString
+               value = "userLocation">
+            </PersistentString>
+            <PersistentString
+               value = "selectedBusLocation">
+            </PersistentString>
+            <PersistentString
+               value = " self.selectedRoute">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #2 in closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
+         contextName = "UserMainMapScreenViewModel.observeOnlineBusOperators():UserMainMapScreenViewModel.swift">
          <PersistentStrings>
             <PersistentString
-               value = "UserDefaults.standard.string(forKey: &quot;user_uid&quot;)">
+               value = "dbRef.observe(.value)">
+            </PersistentString>
+            <PersistentString
+               value = "dbRef">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
+         contextName = "UserMainMapScreenViewModel.startTrackingSelectedBus(busId:):UserMainMapScreenViewModel.swift">
          <PersistentStrings>
             <PersistentString
-               value = "navigateToBusOperatorMainScreen">
+               value = "selectedBusId">
+            </PersistentString>
+            <PersistentString
+               value = "self.selectedBusLocation">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -54,13 +58,61 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "UserMainMapScreenViewModel.observeOnlineBusOperators():UserMainMapScreenViewModel.swift">
+         contextName = "UserMainMapScreenViewModel.restoreFirebaseSession():UserMainMapScreenViewModel.swift">
          <PersistentStrings>
             <PersistentString
-               value = "dbRef.observe(.value)">
+               value = "UserDefaults.standard.string(forKey: &quot;user_id_token&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UserMainMapScreenViewModel.getColoredBusIcon(color:):UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "uiColor">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "navigateToBusOperatorMainScreen">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UserMainMapScreenViewModel.updateMapWithFilteredBusOperators():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "AppColors.busGreen">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in UserMainMapScreenViewModel.observeSelectedBusLocation():UserMainMapScreenViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.selectedBusLocation">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BusOperatorSettingsViewModel.toggleOnlineStatus(isOnline:):BusOperatorSettingsScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UserDefaults.standard">
             </PersistentString>
             <PersistentString
-               value = "dbRef">
+               value = "UserDefaults.standard.string(forKey: &quot;userId&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in closure #1 in LaunchScreen.body.getter:LaunchScreen.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UserDefaults.standard.string(forKey: &quot;user_uid&quot;)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

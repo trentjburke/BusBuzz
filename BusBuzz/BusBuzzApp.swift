@@ -45,6 +45,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return GIDSignIn.sharedInstance.handle(url)
     }
     
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+            Messaging.messaging().apnsToken = deviceToken
+            Messaging.messaging().token { token, error in
+                if let error = error {
+                    print("❌ Error fetching FCM token: \(error.localizedDescription)")
+                } else if let token = token {
+                    print("✅ FCM Token: \(token)")
+                    // Store token in Firestore or Realtime Database
+                }
+            }
+        }
+    
     // ✅ Function to restore Firebase session
     private func restoreFirebaseSession() {
         if let uid = UserDefaults.standard.string(forKey: "user_uid") {
