@@ -10,13 +10,13 @@ struct BusOperatorLoginScreen: View {
     @State private var alertMessage: String = "" // Alert message content
     @State private var navigateToTimetableScreen = false // Navigation trigger to Timetable tab
     @State private var navigateToMainScreen = false // Navigation trigger to Main Screen content
-
+    
     var body: some View {
         NavigationView {
             ZStack {
                 AppColors.background
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 15) {
                     // Logo
                     Image("BusBuzz_Logo_Without_Slogan")
@@ -24,21 +24,21 @@ struct BusOperatorLoginScreen: View {
                         .scaledToFit()
                         .frame(width: 400, height: 300)
                         .padding(.top, -190)
-
+                    
                     // Login title
                     HStack(alignment: .center, spacing: 10) {
                         Image("Bus_Driver_Icon_Trial")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 65, height: 65)
-
+                        
                         Text("Bus Operator Login")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.leading, 5)
                     }
                     .padding(.top, -40)
-
+                    
                     // User ID and Password Fields
                     VStack(spacing: 10) {
                         TextField("Enter Email", text: $userID)
@@ -56,7 +56,7 @@ struct BusOperatorLoginScreen: View {
                                 emailError = newValue.isEmpty
                             }
                             .padding(.horizontal, 20)
-
+                        
                         HStack {
                             if showPassword {
                                 TextField("Enter Password", text: $password)
@@ -73,7 +73,7 @@ struct BusOperatorLoginScreen: View {
                                         passwordError = newValue.isEmpty
                                     }
                             }
-
+                            
                             Button(action: {
                                 showPassword.toggle()
                             }) {
@@ -91,7 +91,7 @@ struct BusOperatorLoginScreen: View {
                         )
                         .padding(.horizontal, 20)
                     }
-
+                    
                     HStack {
                         Spacer()
                         NavigationLink(destination: ForgotPasswordScreen().navigationBarBackButtonHidden(true)) {
@@ -102,7 +102,7 @@ struct BusOperatorLoginScreen: View {
                         .padding(.trailing, 40)
                     }
                     .padding(.top, 5)
-
+                    
                     Button(action: {
                         handleSignIn(email: userID, password: password)
                     }) {
@@ -115,33 +115,33 @@ struct BusOperatorLoginScreen: View {
                             .cornerRadius(15)
                             .padding(.horizontal, 40)
                     }
-
+                    
                     NavigationLink(destination: BusOperatorMainScreenContentView(), isActive: $navigateToMainScreen) {
                         EmptyView()
                     }
-
-                    HStack {
-                         Text("Don’t have an account?")
-                             .font(.system(size: 16, weight: .regular))
-                             .foregroundColor(.white)
-
-                         NavigationLink(destination: BusOperatorSignUpScreen().navigationBarBackButtonHidden(true)) {
-                             Text("Sign Up")
-                                 .font(.system(size: 16, weight: .bold))
-                                 .foregroundColor(AppColors.buttonGreen)
-                         }
-                     }
-                     .padding(.top, -15) // Reduced padding to bring it closer to the Sign In button
-
-                
-                     // Move "Are you a passenger?" to the bottom of the screen
-                     NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
-                         Text("Are you a commuter?")
-                             .font(.system(size: 16, weight: .bold))
-                             .foregroundColor(AppColors.buttonGreen)
-                     }
                     
-                     .padding(.bottom, 15 ) // Added padding to push it further down
+                    HStack {
+                        Text("Don’t have an account?")
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundColor(.white)
+                        
+                        NavigationLink(destination: BusOperatorSignUpScreen().navigationBarBackButtonHidden(true)) {
+                            Text("Sign Up")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(AppColors.buttonGreen)
+                        }
+                    }
+                    .padding(.top, -15) // Reduced padding to bring it closer to the Sign In button
+                    
+                    
+                    // Move "Are you a passenger?" to the bottom of the screen
+                    NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
+                        Text("Are you a commuter?")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(AppColors.buttonGreen)
+                    }
+                    
+                    .padding(.bottom, 15 ) // Added padding to push it further down
                     
                 }
             }
@@ -156,32 +156,32 @@ struct BusOperatorLoginScreen: View {
             .navigationBarHidden(true)         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
-
+    
     private func handleSignIn(email: String, password: String) {
         emailError = email.isEmpty
         passwordError = password.isEmpty
-
+        
         if emailError || passwordError {
             alertMessage = "Email and Password cannot be empty."
             showAlert = true
             return
         }
-
+        
         let apiKey = "AIzaSyArDIXE2RlOom_9Zx5Dfy5BtVrDJ2zsLos"
         let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=\(apiKey)")!
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
+        
         let payload: [String: Any] = [
             "email": email,
             "password": password,
             "returnSecureToken": true
         ]
-
+        
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-
+        
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -190,7 +190,7 @@ struct BusOperatorLoginScreen: View {
                 }
                 return
             }
-
+            
             guard let data = data,
                   let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                 DispatchQueue.main.async {
@@ -199,7 +199,7 @@ struct BusOperatorLoginScreen: View {
                 }
                 return
             }
-
+            
             if let error = json["error"] as? [String: Any] {
                 DispatchQueue.main.async {
                     self.alertMessage = error["message"] as? String ?? "An unknown error occurred."
@@ -207,7 +207,7 @@ struct BusOperatorLoginScreen: View {
                 }
                 return
             }
-
+            
             // ✅ Save the UID in UserDefaults for session persistence
             if let userId = json["localId"] as? String,
                let idToken = json["idToken"] as? String {
@@ -216,8 +216,8 @@ struct BusOperatorLoginScreen: View {
                 UserDefaults.standard.set("bus_operator", forKey: "user_type")
                 print("✅ UID Saved: \(userId)")
                 print("✅ ID Token Saved: \(idToken)")
+                
             }
-
             DispatchQueue.main.async {
                 self.navigateToMainScreen = true
             }

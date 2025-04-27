@@ -21,7 +21,7 @@ struct SettingsRow: View {
 
     private var rowContent: some View {
         HStack {
-            // Use Custom Icons
+            
             Image(iconName)
                 .resizable()
                 .frame(width: 35, height: 35)
@@ -33,7 +33,6 @@ struct SettingsRow: View {
 
             Spacer()
 
-            // Arrow Indicator for Navigation (Only for navigation links)
             if destination != nil {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)

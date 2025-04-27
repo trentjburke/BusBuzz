@@ -24,6 +24,7 @@
 		7E8C8B042D4B5E8B00F6E47D /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8B032D4B5E8B00F6E47D /* FirebaseStorage */; };
 		7E8C8B072D4B5EE000F6E47D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8B062D4B5EE000F6E47D /* GoogleSignIn */; };
 		7E8C8B092D4B5EE000F6E47D /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8C8B082D4B5EE000F6E47D /* GoogleSignInSwift */; };
+		7E8EC9A72DBBDA97000AC2E4 /* User Guide Document- BusBuzz.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7E8EC9A62DBBDA97000AC2E4 /* User Guide Document- BusBuzz.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		7E5CA83C2D27C19C0004ADE6 /* BusBuzz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusBuzz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA8532D27C19D0004ADE6 /* BusBuzzTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E5CA85D2D27C19D0004ADE6 /* BusBuzzUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BusBuzzUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E8EC9A62DBBDA97000AC2E4 /* User Guide Document- BusBuzz.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "User Guide Document- BusBuzz.pdf"; sourceTree = "<group>"; };
 		7EE51D392D4A60ED00A921BB /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7EE51E092D4A88B000A921BB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		7EE51E0B2D4A88BE00A921BB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -160,6 +162,7 @@
 		7E5CA8332D27C19C0004ADE6 = {
 			isa = PBXGroup;
 			children = (
+				7E8EC9A62DBBDA97000AC2E4 /* User Guide Document- BusBuzz.pdf */,
 				7E048BFF2D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf */,
 				7E048C002D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf */,
 				7E5CA83E2D27C19C0004ADE6 /* BusBuzz */,
@@ -338,6 +341,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E8EC9A72DBBDA97000AC2E4 /* User Guide Document- BusBuzz.pdf in Resources */,
 				7E048C012D49117D00FF6A16 /* BussBuzz Emergency Services Contact List.pdf in Resources */,
 				7E048C022D49117D00FF6A16 /* BussBuzz User Application Privacy Policy.pdf in Resources */,
 			);

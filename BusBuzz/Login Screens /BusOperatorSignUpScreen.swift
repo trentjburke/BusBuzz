@@ -113,10 +113,9 @@ struct BusOperatorSignUpScreen: View {
                 .padding(.top, 10)
                 
                 // Navigation to Login Screen
-                NavigationLink(destination: BusOperatorLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToLogin) {
-                    EmptyView()
-                }
-                
+                               NavigationLink(destination: BusOperatorLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToLogin) {
+                                   EmptyView()
+                               }
                 // Already Have an Account Section
                 HStack {
                     Text("Already have an Account?")

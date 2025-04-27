@@ -55,7 +55,7 @@ struct UserMainMapScreen: View {
                     }) {
                         Text("Find a Bus")
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 16)
                             .background(AppColors.buttonGreen)
                             .foregroundColor(.white)
                             .cornerRadius(8)

@@ -16,7 +16,7 @@ struct BusOperatorMainScreenContentView: View {
                             VStack {
                                 Image(systemName: "list.bullet")
                                     .imageScale(.large)
-                                Text("Schedule") 
+                                Text("Schedule")
                             }
                         }
                         .tag(0)

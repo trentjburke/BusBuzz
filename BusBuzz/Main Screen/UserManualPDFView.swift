@@ -1,21 +1,21 @@
 import SwiftUI
 import PDFKit
 
-struct PrivacyPolicyPDFView: View {
+struct UserManualPDFView: View {
     var body: some View {
-        PDFKitContainer()
-            .navigationTitle("Privacy Policy")
+        PDFKitContainerUserGuide()
+            .navigationTitle("User Guide")
             .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct PDFKitContainer: View {
-    let url: URL? = Bundle.main.url(forResource: "BussBuzz User Application Privacy Policy", withExtension: "pdf")
-    
+struct PDFKitContainerUserGuide: View {
+    let url: URL? = Bundle.main.url(forResource: "User Guide Document- BusBuzz", withExtension: "pdf")
+
     var body: some View {
         if let pdfURL = url {
             PDFKitView(url: pdfURL)
-                .edgesIgnoringSafeArea(.bottom) 
+                .edgesIgnoringSafeArea(.bottom)
         } else {
             Text("PDF not found")
                 .foregroundColor(.red)
@@ -24,10 +24,10 @@ struct PDFKitContainer: View {
     }
 }
 
-struct PrivacyPolicyPDFView_Previews: PreviewProvider {
+struct UserGuidePDFView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PrivacyPolicyPDFView()
+            UserManualPDFView()
         }
     }
 }

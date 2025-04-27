@@ -245,40 +245,41 @@ struct BusOperatorSettingsScreen: View {
                                     }
                                 }
                         }
+                        .toggleStyle(SwitchToggleStyle(tint: AppColors.buttonGreen))
                         .padding(12)
                         .background(AppColors.grayBackground)
                         .cornerRadius(8)
                         .padding(.horizontal)
                         
-                        // Route Info and Toggle Card
                         HStack {
-                            // Displaying "Route Interchange" text
+                            // Route Interchange Label
+                            Image("RouteInterchange") // Your icon image
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .padding(.trailing, 20)
+                        
                             Text("Route Interchange")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(AppColors.background)  // You can change the color here as needed
-                                .padding(12)
-                                .background(AppColors.grayBackground)
-                                .cornerRadius(8)
-                                .padding(.leading)
-
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(AppColors.background)
+                                .padding(.trailing, 10)
+                            
                             Spacer()
-
-                            // Toggle aligned in the right corner
+                            // Toggle for Route Interchange
                             Toggle("", isOn: $isRouteActive)
                                 .labelsHidden()
                                 .onChange(of: isRouteActive) { value in
                                     updateRouteInterchangeStatus(isActive: value)
                                 }
                                 .toggleStyle(SwitchToggleStyle(tint: AppColors.buttonGreen))
-                                .padding(10)
                                 .background(AppColors.grayBackground)
                                 .cornerRadius(8)
-                                .padding(.horizontal)
+                            
                         }
-                        .padding(10)
+                        .padding(12)
                         .background(AppColors.grayBackground)
                         .cornerRadius(8)
                         .padding(.horizontal)
+
                         // Settings Rows
                         SettingsRow(iconName: "Application info", title: "Application Info", textColor: AppColors.background, destination: AnyView(ApplicationInfoView()))
                         SettingsRow(iconName: "User Manual", title: "User Manual", textColor: AppColors.background, destination: AnyView(UserManualPDFView()))

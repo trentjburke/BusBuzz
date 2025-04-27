@@ -9,7 +9,7 @@ struct PDFViewer: View {
             HStack {
                 Spacer()
                 Button("Close") {
-                    // Dismiss the view
+                
                 }
                 .padding()
             }
