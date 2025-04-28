@@ -33,30 +33,30 @@ struct BusOperatorSignUpScreen: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 05) {
-                // Logo
+                
                 Image("BusBuzz_Logo_Without_Slogan")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 400, height: 300)
                     .padding(.top, -12)
                 
-                // Title
+                
                 Text("Create Bus Operator Account")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
                 
-                // Input Fields
+                
                 VStack(spacing: 8) {
-                    // User ID Field
+                    
                     InputField(
                         title: "Enter Email address",
                         text: $userID,
                         error: $userIDError
                     )
                     
-                    // Bus Type Picker
+                    
                     DropdownField(
                         title: "Select Bus Type",
                         selectedOption: $busType,
@@ -64,14 +64,14 @@ struct BusOperatorSignUpScreen: View {
                         options: busTypes
                     )
                     
-                    // License Plate Number Field
+                    
                     InputField(
                         title: "License Plate Number",
                         text: $licensePlateNumber,
                         error: $licensePlateError
                     )
                     
-                    // Bus Route Picker
+                    
                     DropdownField(
                         title: "Select Bus Route",
                         selectedOption: $selectedRoute,
@@ -79,7 +79,7 @@ struct BusOperatorSignUpScreen: View {
                         options: busRoutes
                     )
                     
-                    // Password Field
+                
                     SecureInputField(
                         title: "Create Password",
                         text: $password,
@@ -87,7 +87,7 @@ struct BusOperatorSignUpScreen: View {
                         error: $passwordError
                     )
                     
-                    // Confirm Password Field
+                    
                     SecureInputField(
                         title: "Confirm Password",
                         text: $confirmPassword,
@@ -96,7 +96,7 @@ struct BusOperatorSignUpScreen: View {
                     )
                 }
                 
-                // Sign-Up Button
+                
                 Button(action: {
                     handleSignUp()
                 }) {
@@ -112,11 +112,11 @@ struct BusOperatorSignUpScreen: View {
                 }
                 .padding(.top, 10)
                 
-                // Navigation to Login Screen
+                
                                NavigationLink(destination: BusOperatorLoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToLogin) {
                                    EmptyView()
                                }
-                // Already Have an Account Section
+                
                 HStack {
                     Text("Already have an Account?")
                         .font(.subheadline)
@@ -137,7 +137,7 @@ struct BusOperatorSignUpScreen: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("⚠️ Error"),
+                title: Text("Warning: Error"),
                 message: Text(alertMessage),
                 dismissButton: .default(Text("OK"))
             )
@@ -146,7 +146,7 @@ struct BusOperatorSignUpScreen: View {
     }
 
     private func handleSignUp() {
-        // Validation
+        
         userIDError = userID.isEmpty
         licensePlateError = licensePlateNumber.isEmpty
         busTypeError = busType == nil
@@ -200,16 +200,16 @@ struct BusOperatorSignUpScreen: View {
                 return
             }
 
-            // ✅ Save the UID and Token in UserDefaults for session persistence
+            
             if let idToken = json["idToken"] as? String {
                 UserDefaults.standard.set(localId, forKey: "user_uid")
                 UserDefaults.standard.set(idToken, forKey: "user_id_token")
                 UserDefaults.standard.set("bus_operator", forKey: "user_type")
-                print("✅ UID Saved: \(localId)")
-                print("✅ Token Saved: \(idToken)")
+                print("Sucess: UID Saved: \(localId)")
+                print("Sucess: Token Saved: \(idToken)")
             }
 
-            // ✅ Now save the bus operator info
+        
             self.saveBusOperatorInfo(localId: localId)
         }.resume()
     }
@@ -220,7 +220,7 @@ struct BusOperatorSignUpScreen: View {
         guard let url = URL(string: databaseURL) else { return }
 
         let busOperatorData: [String: Any] = [
-            "user_id": localId,  // ✅ Store the Firebase UID (important for identification)
+            "user_id": localId, 
             "email": userID,
             "licensePlateNumber": licensePlateNumber,
             "busType": busType ?? "",
@@ -243,7 +243,7 @@ struct BusOperatorSignUpScreen: View {
                 DispatchQueue.main.async {
                     showToast = true
 
-                    // Navigate to login screen after toast
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         showToast = false
                         navigateToLogin = true
@@ -253,7 +253,7 @@ struct BusOperatorSignUpScreen: View {
         }.resume()
     }
     
-    // MARK: - Helper Views
+    
     struct InputField: View {
         var title: String
         @Binding var text: String

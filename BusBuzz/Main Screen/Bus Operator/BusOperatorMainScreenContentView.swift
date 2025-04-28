@@ -9,7 +9,7 @@ struct BusOperatorMainScreenContentView: View {
                 .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 0) {
-                // Main content area (TabView)
+                
                 TabView(selection: $selectedTab) {
                     BusOperatorTimetableScreen()
                         .tabItem {

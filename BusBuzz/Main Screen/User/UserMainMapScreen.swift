@@ -5,7 +5,7 @@ import CoreLocation
 struct UserMainMapScreen: View {
     @StateObject private var viewModel = UserMainMapScreenViewModel()
     @State private var googleMapView: GMSMapView?
-    @State private var selectedRouteFromPicker: BusRoute? = BusRoute.allRoutes.first // ✅ Set default value
+    @State private var selectedRouteFromPicker: BusRoute? = BusRoute.allRoutes.first
     
     var availableRoutes: [BusRoute] {
         return BusRoute.allRoutes
@@ -42,7 +42,7 @@ struct UserMainMapScreen: View {
                     }
                     .pickerStyle(MenuPickerStyle())
                     .frame(height: 50)
-                    .frame(maxWidth: .infinity) // ✅ Ensure it takes available space
+                    .frame(maxWidth: .infinity) // Sucess: Ensure it takes available space
                     .background(AppColors.grayBackground)
                     .cornerRadius(8)
                     
@@ -61,35 +61,40 @@ struct UserMainMapScreen: View {
                             .cornerRadius(8)
                     }
                 }
-                .padding(.horizontal) // ✅ Padding for alignment
+                .padding(.horizontal)
                 
                 Spacer()
                 if (viewModel.selectedBusId != nil) {
-                    Text(viewModel.etaText)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(AppColors.background.opacity(0.8))
-                        .cornerRadius(10)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 40)
+                    VStack(spacing: 8) {
+                        Text("\(viewModel.selectedBusType) • \(viewModel.selectedLicensePlate)")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                        
+                        Text(viewModel.etaText)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(AppColors.background.opacity(0.8))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
                 
+                VStack {
+                    Spacer()
+                    AppColors.grayBackground
+                        .frame(height: 83)
+                        .edgesIgnoringSafeArea(.bottom)
+                }
+                .edgesIgnoringSafeArea(.bottom)
             }
-            
-            VStack {
-                Spacer()
-                AppColors.grayBackground
-                    .frame(height: 83)
-                    .edgesIgnoringSafeArea(.bottom)
-            }
-            .edgesIgnoringSafeArea(.bottom)
-        }
-        .onChange(of: selectedRouteFromPicker) { newRoute in
-            if let selectedRoute = newRoute {
-                viewModel.updateSelectedRoute(selectedRoute) // ✅ Updates route & restarts timer
-                viewModel.loadPolyline(for: selectedRoute)
+            .onChange(of: selectedRouteFromPicker) { newRoute in
+                if let selectedRoute = newRoute {
+                    viewModel.updateSelectedRoute(selectedRoute)
+                    viewModel.loadPolyline(for: selectedRoute)
+                }
             }
         }
     }

@@ -11,27 +11,27 @@ struct ResetPasswordScreen: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
-                // Logo
+                
                 Image("BusBuzz_Logo_Without_Slogan")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 400, height: 275)
                     .padding(.top, -40)
 
-                // Title
+            
                 Text("Enter new password")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.top, -40)
                 
-                // Subtitle
+              
                 Text("Please enter a new password to login to your existing account")
                     .font(.system(size: 16, weight: .regular))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
 
-                // Password Input Fields
+               
                 VStack(spacing: 15) {
                     SecureField("Enter new password", text: $newPassword)
                         .padding()
@@ -47,7 +47,7 @@ struct ResetPasswordScreen: View {
                 }
                 .padding(.top, 10)
 
-                // Update Password Button
+                
                 Button(action: {
                     print("Update Password Tapped")
                 }) {

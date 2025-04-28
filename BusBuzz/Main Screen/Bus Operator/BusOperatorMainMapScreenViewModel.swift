@@ -12,10 +12,10 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     private var locationManager = CLLocationManager()
     private var googleMapView: GMSMapView?
     
-    // Timer for location updates (every 15 seconds)
+    
     private var locationUpdateTimer: Timer?
     
-    // Hardcoded routes with coordinates for bus stops
+    
     private let busRoutes: [String: [(name: String, location: CLLocationCoordinate2D)]] = [
         "119 Dehiwala - Maharagama": [
             ("Maharagama", CLLocationCoordinate2D(latitude: 6.846004, longitude: 79.926111)),
@@ -35,11 +35,11 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
     
         "120 Colombo - Kesbewa": [
             ("Kesbewa", CLLocationCoordinate2D(latitude: 6.8001, longitude: 79.9415)),
-            // Add all other stops here...
+            
         ],
         "Ex-01 Colombo Makumbara Bus Station - Galle Central Bus Station": [
             ("Makumbura", CLLocationCoordinate2D(latitude: 6.8391, longitude: 79.9763)),
-            // Add all other stops here...
+            
         ]
     ]
 
@@ -55,22 +55,22 @@ class BusOperatorMainMapScreenViewModel: NSObject, ObservableObject, CLLocationM
         locationManager.startUpdatingLocation()
     }
 
-    // Start tracking the bus and load the route's polyline on the map
+    
     func startTrackingBus(for selectedRoute: String?) {
         locationManager.startUpdatingLocation()
         
-        // Set the route's polyline if selected
+        
         if let selectedRoute = selectedRoute {
             loadRouteOnMap(route: selectedRoute)
         }
         
-        // Start updating location every 15 seconds
+        // Start updating location every 5 seconds
         startLocationUpdateTimer()
     }
 
-    // Start the timer to update the location every 15 seconds
+    // Start the timer to update the location every 5 seconds
     private func startLocationUpdateTimer() {
-        locationUpdateTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
+        locationUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             self?.saveBusLocationToFirebase()
             self?.updateCurrentBusStop()
         }

@@ -130,7 +130,7 @@ struct UserLoginScreen: View {
                             .padding(.horizontal, 40)
                     }
 
-                    // Navigation to the Main Screen
+                    
                     NavigationLink(destination: UserMainScreenContentView(), isActive: $navigateToMainScreen) {
                         EmptyView()
                     }
@@ -151,7 +151,7 @@ struct UserLoginScreen: View {
                     }
                     .padding(.top, 5)
 
-                    // Navigation to Sign-Up Screen
+                    
                     NavigationLink(
                         destination: UserSignUpScreen()
                             .navigationBarBackButtonHidden(true),
@@ -172,20 +172,20 @@ struct UserLoginScreen: View {
                         handleGoogleSignIn()
                     }) {
                         HStack {
-                            // Spacer to center content
+                            
                             Spacer()
 
-                            // Google Icon
+                            
                             Image("GoogleIcon")
                                 .resizable()
                                 .frame(width: 44, height: 24)
 
-                            // Spacing between the icon and the text
+                        
                             Text("Sign In with Google")
                                 .font(.headline)
                                 .foregroundColor(.black)
 
-                            // Spacer to balance content
+                           
                             Spacer()
                         }
                         .frame(maxWidth: .infinity)
@@ -206,7 +206,7 @@ struct UserLoginScreen: View {
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Login Error"),
-                    message: Text("⚠️ \(alertMessage)"),
+                    message: Text("Warning: \(alertMessage)"),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -271,8 +271,8 @@ struct UserLoginScreen: View {
                 UserDefaults.standard.set(userId, forKey: "user_uid")
                 UserDefaults.standard.set(idToken, forKey: "user_id_token")
                 UserDefaults.standard.set("user", forKey: "user_type")
-                print("✅ UID Saved: \(userId)")
-                print("✅ ID Token Saved: \(idToken)")
+                print("Sucess: UID Saved: \(userId)")
+                print("Sucess: ID Token Saved: \(idToken)")
             }
 
 

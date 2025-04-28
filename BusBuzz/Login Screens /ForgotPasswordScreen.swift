@@ -9,30 +9,30 @@ struct ForgotPasswordScreen: View {
 
     var body: some View {
         ZStack {
-            // Background color
+            
             AppColors.background
                 .ignoresSafeArea()
 
             VStack(spacing: 15) {
-                // Logo
+                
                 Image("BusBuzz_Logo_Without_Slogan")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 400, height: 300)
 
-                // Title
+                
                 Text("Forgot your password?")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
 
-                // Subtitle
+                
                 Text("Enter your registered email, and we will send you a password reset email.")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
 
-                // Email TextField
+                
                 TextField("Enter email address", text: $email, onEditingChanged: { _ in
                     emailError = false
                 })
@@ -47,7 +47,7 @@ struct ForgotPasswordScreen: View {
                     )
                     .padding(.horizontal, 20)
 
-                // Send Verification Email Button
+                
                 Button(action: {
                     handleForgotPassword(email: email)
                 }) {
@@ -61,7 +61,7 @@ struct ForgotPasswordScreen: View {
                         .padding(.horizontal, 40)
                 }
 
-                // Remember Password Section
+            
                 HStack(spacing: 5) {
                     Text("Remember your password?")
                         .font(.system(size: 16, weight: .semibold))
@@ -91,20 +91,19 @@ struct ForgotPasswordScreen: View {
         emailError = email.isEmpty
 
         guard !email.isEmpty else {
-            alertTitle = "⚠️ Error"
+            alertTitle = "Warning: Error"
             alertMessage = "Please enter your email address."
             showAlert = true
             return
         }
 
         guard isValidEmail(email) else {
-            alertTitle = "⚠️ Error"
+            alertTitle = "Warning: Error"
             alertMessage = "Please enter a valid email address."
             showAlert = true
             return
         }
 
-        // Firebase Forgot Password Logic
         let apiKey = "AIzaSyBBhpcPZ0Yd01NaBuqj6iVe4pbSeIjKRYU"
         let url = URL(string: "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=\(apiKey)")!
 
@@ -121,7 +120,7 @@ struct ForgotPasswordScreen: View {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    alertTitle = "⚠️ Error"
+                    alertTitle = "Warning: Error"
                     alertMessage = "Network error, please try again."
                     showAlert = true
                 }
@@ -143,14 +142,14 @@ struct ForgotPasswordScreen: View {
                     } else if let errorResponse = jsonResponse?["error"] as? [String: Any],
                               let message = errorResponse["message"] as? String {
                         DispatchQueue.main.async {
-                            alertTitle = "⚠️ Error"
+                            alertTitle = "Warning: Error"
                             alertMessage = message
                             showAlert = true
                         }
                     }
                 } catch {
                     DispatchQueue.main.async {
-                        alertTitle = "⚠️ Error"
+                        alertTitle = "Warning: Error"
                         alertMessage = "Failed to parse response."
                         showAlert = true
                     }

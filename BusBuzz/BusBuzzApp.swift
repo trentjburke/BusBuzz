@@ -33,7 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let apiKey = "AIzaSyB1ymE_w2NaWXIhZvSe7KVUScuPtcjRCU4"
         GMSServices.provideAPIKey(apiKey)
         
-        // ✅ Attempt to restore Firebase session
+        // Sucess: Attempt to restore Firebase session
         restoreFirebaseSession()
         
         return true
@@ -49,15 +49,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             Messaging.messaging().apnsToken = deviceToken
             Messaging.messaging().token { token, error in
                 if let error = error {
-                    print("❌ Error fetching FCM token: \(error.localizedDescription)")
+                    print("Error: Error fetching FCM token: \(error.localizedDescription)")
                 } else if let token = token {
-                    print("✅ FCM Token: \(token)")
+                    print("Sucess: FCM Token: \(token)")
                     // Store token in Firestore or Realtime Database
                 }
             }
         }
     
-    // ✅ Function to restore Firebase session
+    // Sucess: Function to restore Firebase session
     private func restoreFirebaseSession() {
         if let uid = UserDefaults.standard.string(forKey: "user_uid") {
             print("🔄 Checking Firebase session for UID: \(uid)")
@@ -65,21 +65,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             let currentUser = Auth.auth().currentUser
 
             if let user = currentUser {
-                print("✅ Firebase session already active for UID: \(user.uid)")
+                print("Sucess: Firebase session already active for UID: \(user.uid)")
             } else {
-                print("⚠️ No active Firebase session. Attempting re-authentication.")
+                print("Warning: No active Firebase session. Attempting re-authentication.")
 
                 // Fetch the latest ID token and refresh if needed
                 Auth.auth().signIn(withEmail: "your_email@example.com", password: "your_password") { authResult, error in
                     if let error = error {
-                        print("❌ Re-authentication failed: \(error.localizedDescription)")
+                        print("Error: Re-authentication failed: \(error.localizedDescription)")
                     } else if let user = authResult?.user {
-                        print("✅ Firebase session restored for UID: \(user.uid)")
+                        print("Sucess: Firebase session restored for UID: \(user.uid)")
                     }
                 }
             }
         } else {
-            print("❌ No stored UID. User must log in.")
+            print("Error: No stored UID. User must log in.")
         }
     }
 }

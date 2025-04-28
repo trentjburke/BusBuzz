@@ -70,15 +70,15 @@ struct UserSettingsScreen: View {
         let dbRef = Database.database().reference().child("busOperators").child(uid)
         dbRef.updateChildValues(["isOnline": false]) { error, _ in
             if let error = error {
-                print("❌ Failed to go offline during logout: \(error.localizedDescription)")
+                print("Error: Failed to go offline during logout: \(error.localizedDescription)")
             } else {
-                print("✅ User set to offline in Firebase.")
+                print("Sucess: User set to offline in Firebase.")
             }
         }
 
         // Clear stored UID so the session doesn't persist
         UserDefaults.standard.removeObject(forKey: "user_uid")
-        print("✅ UID removed. User is logged out.")
+        print("Sucess: UID removed. User is logged out.")
 
         // Navigate back to the login screen
         showLoginScreen = true

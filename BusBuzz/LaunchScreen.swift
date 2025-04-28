@@ -85,7 +85,7 @@ struct LaunchScreen: View {
             }
         }
         .onAppear {
-            // ✅ Check for stored UID before displaying anything
+            // Sucess: Check for stored UID before displaying anything
             if let storedUID = UserDefaults.standard.string(forKey: "user_uid") {
                 if UserDefaults.standard.string(forKey: "user_type") == "bus_operator" {
                     navigateToBusOperatorMainScreen = true
@@ -95,9 +95,9 @@ struct LaunchScreen: View {
                     navigateToBusOperatorMainScreen = false
                     navigateToUserMainScreen = true
                 }
-                print("✅ User already signed in: \(storedUID)")
+                print("Sucess: User already signed in: \(storedUID)")
             } else {
-                print("❌ No stored UID, user must log in.")
+                print("Error: No stored UID, user must log in.")
             }
             
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

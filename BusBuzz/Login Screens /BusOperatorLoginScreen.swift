@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct BusOperatorLoginScreen: View {
-    @State private var userID: String = "" // User ID input
-    @State private var password: String = "" // Password input
-    @State private var showPassword: Bool = false // Toggle for password visibility
-    @State private var emailError: Bool = false // Error state for email input
-    @State private var passwordError: Bool = false // Error state for password input
-    @State private var showAlert: Bool = false // State for showing alerts
-    @State private var alertMessage: String = "" // Alert message content
-    @State private var navigateToTimetableScreen = false // Navigation trigger to Timetable tab
-    @State private var navigateToMainScreen = false // Navigation trigger to Main Screen content
+    @State private var userID: String = ""
+    @State private var password: String = ""
+    @State private var showPassword: Bool = false
+    @State private var emailError: Bool = false
+    @State private var passwordError: Bool = false
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var navigateToTimetableScreen = false
+    @State private var navigateToMainScreen = false 
     
     var body: some View {
         NavigationView {
@@ -18,14 +18,14 @@ struct BusOperatorLoginScreen: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 15) {
-                    // Logo
+                   
                     Image("BusBuzz_Logo_Without_Slogan")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 400, height: 300)
                         .padding(.top, -190)
                     
-                    // Login title
+                    
                     HStack(alignment: .center, spacing: 10) {
                         Image("Bus_Driver_Icon_Trial")
                             .resizable()
@@ -39,7 +39,6 @@ struct BusOperatorLoginScreen: View {
                     }
                     .padding(.top, -40)
                     
-                    // User ID and Password Fields
                     VStack(spacing: 10) {
                         TextField("Enter Email", text: $userID)
                             .keyboardType(.emailAddress)
@@ -131,24 +130,24 @@ struct BusOperatorLoginScreen: View {
                                 .foregroundColor(AppColors.buttonGreen)
                         }
                     }
-                    .padding(.top, -15) // Reduced padding to bring it closer to the Sign In button
+                    .padding(.top, -15)
                     
                     
-                    // Move "Are you a passenger?" to the bottom of the screen
+                    
                     NavigationLink(destination: LaunchScreen().navigationBarBackButtonHidden(true)) {
                         Text("Are you a commuter?")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(AppColors.buttonGreen)
                     }
                     
-                    .padding(.bottom, 15 ) // Added padding to push it further down
+                    .padding(.bottom, 15 )
                     
                 }
             }
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Login Error"),
-                    message: Text("⚠️ \(alertMessage)"),
+                    message: Text("Warning: \(alertMessage)"),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -208,14 +207,14 @@ struct BusOperatorLoginScreen: View {
                 return
             }
             
-            // ✅ Save the UID in UserDefaults for session persistence
+            
             if let userId = json["localId"] as? String,
                let idToken = json["idToken"] as? String {
                 UserDefaults.standard.set(userId, forKey: "user_uid")
                 UserDefaults.standard.set(idToken, forKey: "user_id_token")
                 UserDefaults.standard.set("bus_operator", forKey: "user_type")
-                print("✅ UID Saved: \(userId)")
-                print("✅ ID Token Saved: \(idToken)")
+                print("Sucess: UID Saved: \(userId)")
+                print("Sucess: ID Token Saved: \(idToken)")
                 
             }
             DispatchQueue.main.async {

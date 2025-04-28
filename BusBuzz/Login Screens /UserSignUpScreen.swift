@@ -129,7 +129,7 @@ struct UserSignUpScreen: View {
                         .padding(.horizontal, 40)
                 }
 
-                // Already Have an Account Section
+                
                 HStack {
                     Text("Already have an Account?")
                         .font(.system(size: 16, weight: .regular))
@@ -151,7 +151,7 @@ struct UserSignUpScreen: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Text("🎉 Successfully registered your account with BusBuzz! 🚌")
+                        Text(" Successfully registered your account with BusBuzz! ")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -173,7 +173,7 @@ struct UserSignUpScreen: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("⚠️ Error"),
+                title: Text("Warning: Error"),
                 message: Text(alertMessage),
                 dismissButton: .default(Text("OK"))
             )
